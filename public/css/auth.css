@@ -1,0 +1,21 @@
+body{
+    margin-top:35px;
+    color:#333;
+    background: #148396;
+}
+body,.wrapper,.panel-title{
+    /*background:#152a3c*/
+    /*background:#fff*/
+}
+.panel, .panel-default,.panel-heading,.panel-default>.panel-heading{
+    /*background:#fff;*/
+}
+a{
+    color:#ce8940
+}
+.logo{
+    margin-bottom:25px;
+}
+.logo img{
+    width:350px;
+}

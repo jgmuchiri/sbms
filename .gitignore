@@ -1,0 +1,25 @@
+/vendor
+/node_modules
+/public/storage
+Homestead.yaml
+Homestead.json
+.env
+bash.exe.stackdump
+# Laravel 5 & Lumen specific
+
+# Composer
+composer.phar
+composer.lock
+
+### PhpStorm ###
+## Directory-based project format:
+.idea/
+# if you remove the above rule, at least ignore the following:
+
+# User-specific stuff:
+!.idea/tasks.xml
+!.idea/dictionaries
+!.idea/shelf
+
+# Packages
+_ide_helper.php
