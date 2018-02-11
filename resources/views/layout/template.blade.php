@@ -82,7 +82,7 @@
         @endpermission
 
         @permission('read-expenses')
-        <li><a href="/expenses"><span class="fa fa-dollar"></span> @lang("Expenses")</a></li>
+        <li><a href="/expenses"><span class="fa fa-cc-visa"></span> @lang("Expenses")</a></li>
         @endpermission
         @permission('read-contacts')
         <li><a href="/contacts"><span class="fa fa-group"></span> @lang("Contacts")</a></li>

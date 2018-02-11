@@ -144,7 +144,7 @@ h3, h4 {
     color:#333;
 
 }
-    /*Buttons*/
+/*Buttons*/
 
 a.btn:hover,
 button:hover {
@@ -616,8 +616,8 @@ a.bg-danger:hover {
 .nav-tabs li a:hover,
 .nav-tabs li.active a,
 .nav-tabs li.active a:hover {
- 
-padding: 9px 20px;
+
+    padding: 9px 20px;
 }
 
 .nav-pills {
@@ -707,7 +707,7 @@ padding: 9px 20px;
         padding: 0;
         overflow-x: hidden;
         overflow-y: auto;
-        background-color: #fff;
+        background-color: #148396;
         box-shadow: 1px 0px 10px rgba(0, 0, 0, .05);
     }
 
@@ -715,11 +715,16 @@ padding: 9px 20px;
         width: 100%;
     }
 }
-
+.sidebar li{
+    border-bottom: solid 1px #ccc;
+}
+.sidebar li:first-child{
+    border-top: solid 1px #ccc;
+}
 .sidebar ul.nav a:hover,
 .sidebar ul.nav li.parent ul li a:hover {
     text-decoration: none;
-    background-color: #e9ecf2;
+    background-color: #333;
 }
 
 .sidebar ul.nav .active a, .sidebar ul.nav li.parent a.active,
@@ -745,7 +750,10 @@ padding: 9px 20px;
 .sidebar ul.nav ul.children li a {
     height: 40px;
     background: #f9f9f9;
-    color: #30a5ff !important;
+    color: #fff !important;
+}
+.sidebar li a{
+    color:#fff;
 }
 
 .sidebar ul.nav li.current a {
