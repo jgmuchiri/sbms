@@ -2,13 +2,11 @@
 
 namespace App\Models\Billing;
 
-use App\Settings;
 use DateTime;
 use Dompdf\Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use stdClass;
 
 class Invoices extends Model
 {
@@ -38,11 +36,10 @@ class Invoices extends Model
     {
         $inv = DB::table('invoice_items')->where('invoice_id', $invoice_id)->get();
         $price = 0;
-        foreach ($inv as $i) {
-            $itemPrice = str_replace(',', '', $i->itemPrice);
-            $price = $price + ($i->itemQty * $itemPrice);
-        }
 
+        foreach ($inv as $i) {
+            $price = $price + ($i->itemQty* $i->itemPrice);
+        }
         return $price;
     }
 

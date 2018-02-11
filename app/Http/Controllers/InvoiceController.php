@@ -145,8 +145,8 @@ class InvoiceController extends Controller
                 'invoice_id' => $invoice->id,
                 'itemName' => $request->itemName[$item],
                 'itemDesc' => $request->itemDesc[$item],
-                'itemQty' => $request->itemQty[$item],
-                'itemPrice' => $request->itemPrice[$item],
+                'itemQty' => is_numeric($request->itemQty[$item])?$request->itemQty[$item]:0,
+                'itemPrice' => $this->isCurrency($request->itemPrice[$item]),
                 'created_by' => Auth::user()->id,
                 'created_at' => date('Y-m-d')
             );
@@ -158,6 +158,14 @@ class InvoiceController extends Controller
 
     }
 
+    function isCurrency($number)
+    {
+        $curr = preg_match("/^-?[0-9]+(?:\.[0-9]{1,2})?$/", $number);
+        if($curr)
+            return $number;
+        else
+            return 0;
+    }
     /**
      * @param $id
      * @return Factory|\Illuminate\View\View
@@ -202,8 +210,8 @@ class InvoiceController extends Controller
                     'invoice_id' => $id,
                     'itemName' => $request->itemName[$item],
                     'itemDesc' => $request->itemDesc[$item],
-                    'itemQty' => $request->itemQty[$item],
-                    'itemPrice' => $request->itemPrice[$item],
+                    'itemQty' => is_numeric($request->itemQty[$item])?$request->itemQty[$item]:0,
+                    'itemPrice' => $this->isCurrency($request->itemPrice[$item]),
                     'created_by' => Auth::user()->id,
                     'created_at' => date('Y-m-d')
                 );

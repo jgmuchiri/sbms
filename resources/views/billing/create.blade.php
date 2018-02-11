@@ -126,14 +126,14 @@
                     <td>
                         <input id="itemQty" required="required"
                                name="itemQty[]"
-                               type="text"
+                               type="number"
                                class="form-control input-sm" value="">
                     </td>
                     <td>
                         <div class="input-group">
                             <span class="input-group-addon">$</span>
                             <input id="itemPrice" required="required" name="itemPrice[]"
-                                   class="form-control input-sm" type="text">
+                                   class="form-control input-sm" type="number" min="0.00" step="0.01">
                         </div>
                     </td>
                     <td>
