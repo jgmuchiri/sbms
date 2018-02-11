@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ContactsController extends Controller
@@ -91,7 +92,9 @@ class ContactsController extends Controller
         $contact = new Contacts();
         if($request->hasFile('photo'))
         {
-            $photo = Tools::uploadImage($request->photo,'uploads/contacts/',null,150);
+            Storage::makeDirectory('public/contacts');
+            $photo= Storage::putFile('public/contacts',$request->file('photo'),'public');
+            $photo = str_replace('public/','',$photo);
             $data['photo'] = $photo;
         }
 
@@ -111,8 +114,8 @@ class ContactsController extends Controller
     }
 
     /**
-     * @param $contact
-     * @param $group
+     * @param $contactID
+     * @param $groupID
      */
     function assignContactToGroup($contactID,$groupID){
         $data = array(
@@ -158,9 +161,11 @@ class ContactsController extends Controller
         $contact = Contacts::findOrFail($id);
         if($request->hasFile('photo'))
         {
-            $photo = Tools::uploadImage($request->photo,'uploads/contacts/',null,150);
+            Storage::makeDirectory('public/contacts');
+            $photo= Storage::putFile('public/contacts',$request->file('photo'),'public');
+            $photo = str_replace('public/','',$photo);
             if($photo !==false){
-                @unlink('uploads/contacts/'.$contact->photo);
+                Storage::delete($contact->photo);
             }
             $data['photo'] = $photo;
         }

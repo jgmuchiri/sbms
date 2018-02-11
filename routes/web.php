@@ -14,6 +14,7 @@
 use App\Models\Log;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 
 Auth::routes();
@@ -128,7 +129,7 @@ Route::group(['middleware' => ['web']], function () {
         Route::post('send-to-email', 'InvoiceController@sendToEmail');
         Route::get('{id}/email-reminder', 'InvoiceController@sendReminder');
 
-        Route::get('/client/{id}','InvoiceController@client');
+        Route::get('/client/{id}', 'InvoiceController@client');
     });
 
     //billing - expenses
@@ -212,8 +213,8 @@ Route::group(['middleware' => ['web']], function () {
         Route::get('/delete-message/{id}', 'ProjectsController@deleteMessage');
 
         Route::post('upload-file', 'ProjectsController@uploadFile');
-        Route::get('file/{id}', 'ProjectsController@downloadFile');
-        Route::get('delete-file/{id}', 'ProjectsController@deleteFile');
+        Route::get('file', 'ProjectsController@downloadFile');
+        Route::get('delete-file', 'ProjectsController@deleteFile');
 
         Route::post('/members/create', 'ProjectsController@addMember');
         Route::get('/members/{id}/remove', 'ProjectsController@removeMember');

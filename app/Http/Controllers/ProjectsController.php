@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProjectsController extends Controller
@@ -302,9 +303,9 @@ class ProjectsController extends Controller
             'task_name' => 'required|max:50',
             't_start' => 'required',
             't_end' => 'required',
-            'milestone_id'=>'required',
-            'est_cost'=>'required',
-            'actual_cost'=>'required'
+            'milestone_id' => 'required',
+            'est_cost' => 'required',
+            'actual_cost' => 'required'
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -355,7 +356,8 @@ class ProjectsController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     function updateTaskStatus(Request $request)
-    {       $t = ProjectTasks::find($request->task_id);
+    {
+        $t = ProjectTasks::find($request->task_id);
         $t->t_status = $request->t_status;
         $t->save();
         flash()->success(__("Task has been updated"));
@@ -540,33 +542,23 @@ class ProjectsController extends Controller
     {
         $rules = [
             'filename' => 'required',
-//            'file' => 'mimetypes:video/avi,video/mpeg,application/pdf,application/msword,application/excel,image/png,image/jpeg,application/octet-stream,application/zip,text/plain'
-            'file' => 'required'
+            'file' => 'required|mimes:jpeg,jpg,png,xsl,xslx,doc,docx,pdf,zip,gz'
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-//        $validator->after(function ($validator) {
-//            global $request;
-//            $myFile = 'file';
-//            if ($request->hasFile($myFile) && $request->$myFile->isValid()) {
-//                $ext = $request->$myFile->getClientOriginalExtension();
-//                if ($ext !== "pdf" && $ext !== "zip" ) {
-//                    $validator->errors()->add($myFile, 'Invalid file extension');
-//                }
-//            } else {
-//                $validator->errors()->add($myFile, 'No file found');
-//            }
-//        });
-
-        $file_name = rand(1111, 9999) . '_' . str_replace(' ', '_', $request->filename);
-
         $file = new ProjectFiles();
         $file->filename = $request->filename;
         $file->project_id = $request->project_id;
         $file->desc = $request->desc;
-        $file->path = Tools::uploadFile($request->file, 'uploads/projectFiles/', $file_name);
+
+        if(!is_dir('storage/project-files')){
+            Storage::makeDirectory('public/project-files');
+        }
+        $pFile = Storage::putFile('public/project-files', $request->file('file'), 'public');
+        $file->path = str_replace('public/', '', $pFile);
+
         $file->size = $request->file->getClientSize();
         $file->user_id = Auth::user()->id;
         $file->save();
@@ -576,25 +568,29 @@ class ProjectsController extends Controller
     }
 
     /**
-     * @param $id
      * @return mixed
      */
-    function downloadFile($id)
+    function downloadFile()
     {
+        $id = $_GET['dl'];
         $file = ProjectFiles::wherePath($id)->first();
-        $path = 'uploads/projectFiles/' . $file->path;
+        $path = 'storage/' . $file->path;
+        if (!file_exists($path)) {
+            flash()->error(__('File not found'));
+            return redirect()->back();
+        }
         Log::add('Downloaded project file ID:' . $id . ' for project ID' . $file->project_id, 'update', 'general');
         return Response::download($path, $file->filename . '.' . pathinfo($file->path, PATHINFO_EXTENSION));
     }
 
     /**
-     * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    function deleteFile($id)
+    function deleteFile()
     {
+        $id = $_GET['file'];
         $file = ProjectFiles::wherePath($id)->first();
-        @unlink('uploads/projectFiles/' . $file->path);
+        @unlink('storage/' . $file->path);
         $file->delete();
         flash()->success(__("File has been deleted"));
         return redirect()->back();

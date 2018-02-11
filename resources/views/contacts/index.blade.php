@@ -41,7 +41,7 @@
                             <div class="contact-card">
                                 <a class="pull-left" href="#">
                                     @if($contact->photo !==null)
-                                        <img class="img-circle" src="/uploads/contacts/{{$contact->photo}}" alt="">
+                                        <img class="img-circle" src="{{asset('storage/'.$contact->photo)}}" alt="">
                                     @else
                                         <img class="img-circle" src="/img/no-photo.png" alt="">
                                     @endif

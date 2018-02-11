@@ -48,9 +48,10 @@ If you need assistance with installation, please send a support ticket at https:
 
 - Extract contents to your desired root directory
 - Create a MySQL database
-- Edit .env file to match your desired configuration including database connection
+- Rename `.env.example` to `.env` in your home directory and update it to match your desired configuration including database connection
 - Open terminal inside root directory and run `composer install`
 - Once composer completes installing vendors, run `php artisan migrate --seed`
+- Run `php artisan storage:link`
 - Default user account is admin@app.com / password
 
 ## Support

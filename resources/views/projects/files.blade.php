@@ -14,7 +14,6 @@
                                 data-toggle="modal"
                                 data-target="#newFileModal"
                                 class="btn btn-default btn-sm pull-right"><i class="fa fa-plus"></i> @lang("New file")</button>
-
                     </div>
 
                 </div>
@@ -28,12 +27,12 @@
                                 {!! \App\Models\Projects\ProjectFiles::getFileIcon($file->path,'fa-4x') !!}
                             </div>
                             <div class="col-sm-6">
-                                <a class="h4 btn-link" href="/projects/file/{{$file->path}}">{{$file->filename}}</a>
+                                <a class="h4 btn-link" href="/projects/file?dl={{$file->path}}">{{$file->filename}}</a>
 
                                 <p class="text-muted">{{$file->desc}}</p>
                             </div>
                             <div class="col-sm-4">
-                                <a href="/projects/delete-file/{{$file->path}}" class="delete text-danger pull-right">
+                                <a href="/projects/delete-file?file={{$file->path}}" class="delete text-danger pull-right">
                                     <i class="fa fa-trash-o"></i>
                                 </a>
                                 @lang("Size"): {{\App\Tools::formatBytes($file->size)}}<br/>
