@@ -1,4 +1,38 @@
 $(document).ready(function () {
+    $(document).on("click", "ul.nav li.parent > a ", function () {
+        $(this).find('em').toggleClass("fa-minus");
+    });
+    $(".sidebar span.icon").find('em:first').addClass("fa-plus");
+
+    $(window).on('resize', function () {
+        if ($(window).width() > 768) $('#sidebar-collapse').collapse('show')
+    });
+    $(window).on('resize', function () {
+        if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
+    });
+
+    $(document).on('click', function (e) {
+        $('[data-toggle="popover"],[data-original-title]').each(function () {
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                (($(this).popover('hide').data('bs.popover') || {}).inState || {}).click = false  // fix for BS 3.3.6
+            }
+        });
+    });
+
+    $(document).on('click', '.panel-heading span.clickable', function (e) {
+        var $this = $(this);
+        if (!$this.hasClass('panel-collapsed')) {
+            $this.parents('.panel').find('.panel-body').slideUp();
+            $this.addClass('panel-collapsed');
+            $this.find('em').removeClass('fa-toggle-up').addClass('fa-toggle-down');
+        } else {
+            $this.parents('.panel').find('.panel-body').slideDown();
+            $this.removeClass('panel-collapsed');
+            $this.find('em').removeClass('fa-toggle-down').addClass('fa-toggle-up');
+        }
+    });
+
+
     $('.btn-data').click(function (e) {
         // e.preventDefault();
         // if (confirm('Please save your progress before adding new data')) {
@@ -61,21 +95,21 @@ $(document).ready(function () {
     $('input[type=text],input[type=time],input[type=date],input[type=number],input[type=password],input[type=email],textarea,select').addClass('form-control');
 
 
-    $('.delete').click(function(e){
-        var loc =$(this).attr('href');
+    $('.delete').click(function (e) {
+        var loc = $(this).attr('href');
         swal({
-            title:'Are you sure?',
-            text:'This action is permanent. You will loose the data',
-            type:'warning',
-            showCancelButton:true,
-            confirmButtonColor:'#DD6B55',
-            confirmButtonText:'Yes, Do it!',
-            closeOnConfirm:false,
-            allowOutsideClick:false
-        },function(){
+            title: 'Are you sure?',
+            text: 'This action is permanent. You will loose the data',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#DD6B55',
+            confirmButtonText: 'Yes, Do it!',
+            closeOnConfirm: false,
+            allowOutsideClick: false
+        }, function () {
             swal('Delete action successful');
-            if(loc !=undefined)
-                window.location.href=loc;
+            if (loc != undefined)
+                window.location.href = loc;
         });
         e.preventDefault();
     })
@@ -87,28 +121,29 @@ function yoube(url) {
     var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     var match = url.match(regExp);
     if (match && match[2].length == 11) {
-        return 'https://www.youtube.com/embed/'+match[2];
+        return 'https://www.youtube.com/embed/' + match[2];
     } else {
         return url;
     }
 }
 
-var shortContent = function() {
-    if($(window).height() > $('body').height()) {
+var shortContent = function () {
+    if ($(window).height() > $('body').height()) {
         $('footer').addClass('shortContent');
     }
 
 };
 
-(function(){
+(function () {
 
     shortContent();
 
-    $(window).resize(function() {
+    $(window).resize(function () {
         shortContent();
     });
 
 }());
+
 /**
  * validates currency
  * @param amount

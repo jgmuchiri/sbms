@@ -1,13 +1,7 @@
-/*
-Lumino Admin Bootstrap Template
-Version 1.0
-*/
-
 /*Global Styles*/
 
 body {
     background: #f1f4f7;
-    padding-top: 50px;
     color: #5f6468;
 }
 
@@ -132,18 +126,21 @@ h3, h4 {
 .contact-group-nav .nav-pills li a,
 .contact-group-nav .nav-pills li a:hover,
 .contact-group-nav .nav-pills li.active a,
-.contact-group-nav .nav-pills li.active a:hover{
-    padding:7px 5px;
-    margin:0
+.contact-group-nav .nav-pills li.active a:hover {
+    padding: 7px 5px;
+    margin: 0
 }
-.nav-pills li a{
+
+.nav-pills li a {
     background: #9a9b9d;
-    color:#fff;
+    color: #fff;
 }
-.nav-pills li a:hover{
-    color:#333;
+
+.nav-pills li a:hover {
+    color: #333;
 
 }
+
 /*Buttons*/
 
 a.btn:hover,
@@ -693,12 +690,14 @@ a.bg-danger:hover {
     border-bottom: 1px solid #eee;
     margin-bottom: 20px;
 }
-
+.sidebar{
+    background-color: #148396;
+}
 @media (min-width: 768px) {
     .sidebar {
         display: block;
         position: fixed;
-        top: 50px;
+        top: 0;
         bottom: 0;
         left: 0;
         z-index: 1000;
@@ -715,12 +714,11 @@ a.bg-danger:hover {
         width: 100%;
     }
 }
-.sidebar li{
+
+.sidebar li {
     border-bottom: solid 1px #ccc;
 }
-.sidebar li:first-child{
-    border-top: solid 1px #ccc;
-}
+
 .sidebar ul.nav a:hover,
 .sidebar ul.nav li.parent ul li a:hover {
     text-decoration: none;
@@ -752,8 +750,9 @@ a.bg-danger:hover {
     background: #f9f9f9;
     color: #fff !important;
 }
-.sidebar li a{
-    color:#fff;
+
+.sidebar li a {
+    color: #fff;
 }
 
 .sidebar ul.nav li.current a {
@@ -779,7 +778,7 @@ a.bg-danger:hover {
 
 .sidebar .attribution {
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
     width: 100%;
     padding: 15px;
     text-align: center;
@@ -787,8 +786,31 @@ a.bg-danger:hover {
     font-size: 12px;
 }
 
-/*Breadcrumbs*/
+.sidebar .menu .fa {
+    width: 15px;
+    margin-right: 5px;
+}
 
+.sidebar .nav > li:not(:first-child) > a {
+    padding: 15px 15px !important;
+}
+.sidebar .nav > li:first-child> a {
+    padding: 5px !important;
+}
+.sidebar-logo img{
+    width:215px;
+    height:54px;
+}
+
+.sidebar-logo .active a,
+.sidebar-logo > a:hover, .sidebar-logo a.active:hover,
+.sidebar-logo .active > a:focus, .sidebar-logo a.active:focus {
+    text-decoration: none;
+    cursor: default;
+    background: inherit !important;
+}
+
+/*Breadcrumbs*/
 .breadcrumb {
     border-radius: 0;
     padding: 10px 15px;
@@ -803,7 +825,6 @@ h1.page-header {
 }
 
 /*Charts*/
-
 .main-chart {
     background: #fff;
 }
@@ -815,7 +836,7 @@ h1.page-header {
 }
 
 .placeholder h2 {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .donut {
@@ -829,7 +850,6 @@ h1.page-header {
     height: 120px;
     margin: 20px auto 10px auto;
 }
-
 .easypiechart .percent {
     display: block;
     position: absolute;

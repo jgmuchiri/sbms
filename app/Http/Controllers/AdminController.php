@@ -82,11 +82,20 @@ class AdminController extends Controller
     public function uploadLogo(Request $request)
     {
         if ($request->logo !== null) {
-            $path = 'images/';
-            Tools::uploadImage(Input::file('logo'), $path, 'logo');
+            $path = 'img/';
+            $file = Input::file('logo');
+            $extension = $file->getClientOriginalExtension();
+            if($extension == "jpg" || $extension =="JPG" || $extension=="png" || $extension=="PNG"){
+                $fileName = 'logo.' . strtolower($extension);
+                $file->move($path, $fileName);
+                flash()->success(__("Logo uploaded updated!"));
+            }else{
+                flash()->error(__("Invalid image!"));
+            }
+        }else{
+            flash()->error(__("Invalid image!"));
         }
 
-        flash()->success(__("Logo uploaded updated!"));
         return redirect()->back();
     }
 
