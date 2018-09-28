@@ -36,10 +36,10 @@ class InvoiceController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:read-invoices', ['only' => ['index', 'client', 'viewInvoice', 'payInvoice', 'manualPay', 'stripePay'
+        $this->middleware('permission:read invoices', ['only' => ['index', 'client', 'viewInvoice', 'payInvoice', 'manualPay', 'stripePay'
         ]]);
-        $this->middleware('permission:create-invoices', ['only' => ['create', 'storeInvoice', 'replicateInvoice']]);
-        $this->middleware('permission:update-invoices', ['only' => [
+        $this->middleware('permission:create invoices', ['only' => ['create', 'storeInvoice', 'replicateInvoice']]);
+        $this->middleware('permission:update invoices', ['only' => [
             'editInvoice',
             'updateInvoice',
             'invoiceRemoveItem',
@@ -49,7 +49,7 @@ class InvoiceController extends Controller
             'addInventory',
             'deleteInventory'
         ]]);
-        $this->middleware('permission:delete-invoices', ['only' => ['deleteInvoice']]);
+        $this->middleware('permission:delete  invoices', ['only' => ['deleteInvoice']]);
     }
 
     /**

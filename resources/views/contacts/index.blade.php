@@ -83,15 +83,15 @@
                                             {{$contact->email}}
                                         </p>
                                     @endif
-                                    @permission('update-contacts')
+                                    @can('Update contacts')
                                     <div class="contact-action">
                                         <a href="#" class="btn btn-success btn-sm editContact" id="{{$contact->id}}"><i
                                                     class="fa fa-pencil"></i></a>
-                                        @endpermission
-                                        @permission('delete-contacts')
+                                        @endcan
+                                        @can('delete contacts')
                                         <a href="/contacts/{{$contact->id}}/delete" class="delete btn btn-danger btn-sm"><i
                                                     class="fa fa-times"></i></a>
-                                        @endpermission
+                                        @endcan
                                     </div>
                                 </div>
 

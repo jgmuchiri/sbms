@@ -10,10 +10,17 @@
 @endsection
 @section('content')
 
+    <ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#home">User</a></li>
+  <li><a data-toggle="tab" href="#roles">@lang('Roles')</a></li>
+  <li><a data-toggle="tab" href="#permissions">@lang('Permissions')</a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="home" class="tab-pane fade in active">
     <div class="h3">Stripe ID: {{$user->stripe_id}}</div>
-    <div class="row">
-        <div class="col-md-6">
-            {!! Form::model($user,['url'=>'users/'.$user->id]) !!}
+
+   {!! Form::model($user,['url'=>'users/'.$user->id]) !!}
             <table class="table table-striped">
                 <tr>
                     <td>@lang("First name"):</td>
@@ -61,26 +68,99 @@
                 </tr>
             </table>
             {!! Form::close() !!}
-        </div>
-        <div class="col-md-6">
-            <h3>@lang("Roles")</h3>
-            {!! Form::open(['url'=>'users/'.$user->id.'/roles', 'files' => true]) !!}
-            <?php
-            function is_checked($user_id, $role)
-            {
-                $userRoles = DB::table('role_user')->whereUserId($user_id)->get();
-                foreach ($userRoles as $ur) {
-                    if ($ur->role_id == $role) return 'true';
-                }
-            }
-            ?>
-            @foreach($roles as $role)<br/>
-            {{Form::radio('role',$role->id, is_checked($user->id,$role->id))}} {{$role->name}}<br/>
+  </div>
+  <div id="roles" class="tab-pane fade">
+    <h3>@lang("Role")</h3>
+            {!! Form::open(['url'=>'users/'.$user->id.'/update-role']) !!}
+
+            @foreach($roles as $role)
+            {{Form::radio('role',$role->name,!empty($user->roles[0]) && $role->id==$user->roles[0]->id)}}
+            {{$role->name}}<br/>
             @endforeach
             <br/>
             <button class="btn btn-default">@lang("Update")</button>
             {!! Form::close() !!}
+            <br/>
 
+            <h3>@lang("Permissions via role")</h3>
+            <div class="row">
+                @foreach($user->getPermissionsViaRoles() as $perm)
+                    <div class="col-xs-6">{{$perm->name}}</div>
+                @endforeach
+            </div>
+  </div>
+    <div id="permissions" class="tab-pane fade">
+        <h3>
+            @lang("Direct permissions")
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#permsModal">
+                <i class="fa fa-plus"></i>
+            </button>
+        </h3>
+
+        <div class="row">
+            @foreach($user->getDirectPermissions() as $perm)
+                <div class="col-xs-4" style="border-bottom:solid 1px #ccc;">
+                 <i data-user="{{$user->id}}" data-perm="{{$perm->name}}" class="revoke-perm cursor fa fa-trash text-warning"></i>   {{ucwords($perm->name)}}
+                </div>
+            @endforeach
         </div>
     </div>
+</div>
 @endsection
+
+@push('modals')
+
+<div class="modal fade" id="permsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{__('Permissions')}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        {!! Form::open(['url'=>'users/'.$user->id.'/update-permissions']) !!}
+            <div class="modal-body">
+                <div class="row">
+
+                    @foreach($permissions as $perm)
+                <div class="col-xs-6">
+                    <input
+                    value="{{$perm->name}}"
+                    type="checkbox" name="permissions[]"> {{ucwords($perm->name)}}
+                </div>
+            @endforeach
+            </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-primary">Save changes</button>
+            </div>
+       {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+@endpush
+
+@push('scripts')
+<script>
+ $('.revoke-perm').click(function(){
+     let token = $('meta[name="csrf-token"]').attr('content');
+     let user_id = $(this).attr('data-user');
+     let perm = $(this).attr('data-perm');
+     console.log(perm);
+        $.ajax({
+            type: "POST",
+            url: '/revoke-permission',
+            data: {_token:token,user_id:user_id,perm_name:perm},
+            // dataType: 'text',
+            success: function(){
+                window.location.reload();
+            },
+            error: function( jqXhr, textStatus, errorThrown ){
+                            console.log( errorThrown );
+            }
+        });
+ })
+</script>
+@endpush

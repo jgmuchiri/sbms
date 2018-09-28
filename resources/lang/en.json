@@ -176,10 +176,10 @@
   "When you create new modules, add them here and assign permissions. For example if module is": "When you create new modules, add them here and assign permissions. For example if module is",
   "users": "users",
   "then permissions are generated as": "then permissions are generated as",
-  "create-users": "create-users",
-  "read-users": "read-users",
-  "update-users": "update-users",
-  "delete-users": "delete-users",
+  "create users": "create users",
+  "read users": "read users",
+  "update users": "update users",
+  "delete users": "delete users",
   "In your module code, you can define access using": "In your module code, you can define access using",
   "Default modules": "Default modules",
   "tickets": "tickets",
@@ -635,7 +635,9 @@
   "Timer": "Timer",
   "hours": "hours",
   "Update task": "Update task",
-  "Please select a client":"Please select a client",
-  "File not found":"File not found",
-  "Invalid image":"Invalid image"
+  "Please select a client": "Please select a client",
+  "File not found": "File not found",
+  "Invalid image": "Invalid image",
+  "Direct permissions": "Direct permissions",
+  "Permissions via role": "Permissions via role"
 }

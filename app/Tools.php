@@ -168,7 +168,7 @@ class Tools extends Model
      */
     static function allow($perms)
     {
-        $thisUser = User::find(Auth::user()->id);
+        $thisUser = User::find(auth()->user()->id);
 
         if ($thisUser->can($perms)) {
             return true;

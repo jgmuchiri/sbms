@@ -19,20 +19,20 @@ use Illuminate\Support\Facades\View;
 
 Auth::routes();
 Route::group(['middleware' => ['web']], function () {
-
-    if (Auth::guest())
+    if (Auth::guest()) {
         Route::get('/', function () {
             return view('auth.login');
         });
-    else
+    } else {
         return redirect('/dashboard');
+    }
 
     Route::get('dashboard', function () {
-        if (\Trust::hasRole('admin') || \Trust::hasRole('manager')) {
+        if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager')) {
             $logs = Log::paginate(20);
 
             if (Request()->ajax()) {
-                return Response()->json(View::make('logs.index', array('logs' => $logs))->render());
+                return Response()->json(View::make('logs.index', ['logs' => $logs])->render());
             } else {
                 return view('admin.dashboard', compact('logs'));
             }
@@ -53,22 +53,6 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => 'Auth\AuthController@confirmAccount'
     ]);
 
-    //Roles
-    Route::group(['prefix' => 'roles', 'middleware' => ['role:admin']], function () {
-        Route::get('/', 'Auth\AuthController@roles');
-        Route::get('/getRoles', 'Auth\AuthController@rolesJson');
-        Route::post('/', 'Auth\AuthController@newRole');
-    });
-    Route::post('role', 'Auth\AuthController@showRole');
-    Route::post('update-role/{id}', 'Auth\AuthController@updateRole');
-
-    //modules
-    Route::resource('modules', 'ModulesController');
-    Route::post('update-module/{id}', 'ModulesController@update');
-    Route::get('module-permissions/{role_id}/{module_id}', 'Auth\AuthController@permissions');
-    Route::post('role-permissions', 'Auth\AuthController@updateRolePermissions');
-    Route::get('perms', 'ModulesController@perms');
-
     //settings
     Route::group(['prefix' => 'settings', 'middleware' => ['role:admin']], function () {
         Route::get('/', 'AdminController@settings');
@@ -80,7 +64,6 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('debug-log', 'AdminController@debug')->name('debug');
     Route::post('debug-log', 'AdminController@emptyDebugLog')->name('empty-debug-log');
 
-
     Route::post('contact', 'HomeController@sendMessage');
 
     //users
@@ -91,9 +74,13 @@ Route::group(['middleware' => ['web']], function () {
         Route::post('export', 'UserController@export');
         Route::post('register', 'UserController@registerUser');
         Route::post('{id}', 'UserController@updateUser');
-        Route::post('{id}/roles', 'UserController@updateUserRoles');
+
+        Route::post('{id}/update-role', 'UserController@updateUserRole');
+        Route::post('{id}/update-permissions', 'UserController@updatePermissions');
     });
 
+    //Permisions
+    Route::post('revoke-permission', 'UserController@revokePermission');
 
     //routes for all
     Route::group(['prefix' => 'account'], function () {
@@ -218,7 +205,6 @@ Route::group(['middleware' => ['web']], function () {
 
         Route::post('/members/create', 'ProjectsController@addMember');
         Route::get('/members/{id}/remove', 'ProjectsController@removeMember');
-
     });
     Route::get('logs', 'LogsController@index');
 });

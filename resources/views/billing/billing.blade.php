@@ -10,14 +10,14 @@
             @if(isset($client))
                 <a href="/invoice" class="btn btn-default"><i class="fa fa-chevron-left"></i> </a>
             @endif
-            @ability('admin','create-invoice')
+            @can('create invoices')
             <a class="btn btn-warning" href="/invoice/create"><i class="fa fa-plus"></i>
                 @lang("New")</a>
             <a class="btn btn-info" href="/income"><i class="fa fa-dollar"></i>
                 @lang("Income")</a>
 
             <a href="/invoice/inventory" class="btn btn-default"><i class="fa fa-th-list"></i> @lang("Inventory")</a>
-            @endability
+            @endcan
         </div>
         <div class="col-sm-8">
             <button class="btn btn-sm btn-info grandTotal">
@@ -142,7 +142,7 @@
                                            data-user="{{$invoice->user_id}}">
                                             <i class="fa fa-mail-forward"></i> @lang("Send to email")</a>
                                     </li>
-                                    @ability('admin','create-invoice')
+                                    @can('create invoices')
                                     <li>
                                         <a href="{{url('invoice/'.$invoice->id.'/email-reminder')}}">
                                             <i class="fa fa-bell"></i> @lang("Send reminder")
@@ -169,11 +169,11 @@
                                     <li>
                                         <a href="#"
                                            id="{{$invoice->id}}"
-                                           class="delete-invoice text-danger"
+                                           class="delete  invoice text-danger"
                                            data-action="safe"><i
                                                     class="fa fa-times text-danger"></i> @lang("Delete")</a>
                                     </li>
-                                    @endability
+                                    @endcan
                                 </ul>
                             </div>
 
@@ -223,7 +223,7 @@ $advanced = "
         div.modal('show');
     });
 
-    $('.delete-invoice').click(function () {
+    $('.delete  invoice').click(function () {
 
         var this_ = $(this);
         var id = this_.attr('id');

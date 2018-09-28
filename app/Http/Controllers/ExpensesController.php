@@ -6,7 +6,6 @@ use App\Models\Billing\Expenses;
 use App\Models\Log;
 use App\Tools;
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,28 +16,26 @@ class ExpensesController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:create-expenses', ['only' => ['store', 'addCategory']]);
-        $this->middleware('permission:read-expenses', ['only' => ['index']]);
-        $this->middleware('permission:update-expenses', ['only' => ['update']]);
-        $this->middleware('permission:delete-expenses', ['only' => ['destroy']]);
-
+        $this->middleware('permission:create user', ['only' => ['store', 'addCategory']]);
+        $this->middleware('permission:read user', ['only' => ['index']]);
+        $this->middleware('permission:update user', ['only' => ['update']]);
+        $this->middleware('permission:delete user', ['only' => ['destroy']]);
     }
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    function index($id = null)
+    public function index($id = null)
     {
-
         if (isset($_GET['year']) && $id == null && $_GET['year'] !== 'all') {
             $expenses = Expenses::orderBy('created_at', 'DESC')->where('created_at', 'LIKE', $_GET['year'] . '%')->get();
-        } elseif (isset($_GET['year']) && $_GET['year'] == "all") {
+        } elseif (isset($_GET['year']) && $_GET['year'] == 'all') {
             $expenses = Expenses::orderBy('created_at', 'DESC')->get();
         } else {
             $expenses = Expenses::orderBy('created_at', 'DESC')->where('created_at', 'LIKE', date('Y') . '%')->get();
         }
 
-        $exp = array();
+        $exp = [];
         if ($id !== null && is_numeric($id)) {
             $exp = Expenses::findOrFail($id);
         }
@@ -46,12 +43,11 @@ class ExpensesController extends Controller
         return view('billing.expenses', compact('expenses', 'exp'));
     }
 
-
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    function store(Request $request)
+    public function store(Request $request)
     {
         $rules = [
             'name' => 'required|max:50',
@@ -63,19 +59,19 @@ class ExpensesController extends Controller
         }
 
         if ($request->get('client') == 0 || $request->has('client') == false) {
-            flash()->error(__("Please select a client"));
+            flash()->error(__('Please select a client'));
             return redirect()->back()->withInput();
         }
 
         unset($request['task_id']);
-        $request['user_id'] = Auth::user()->id;
+        $request['user_id'] = auth()->user()->id;
         if (is_string($request->task_id)) {
-            $request['task_id'] = NULL;
+            $request['task_id'] = null;
         }
 
         $exp = new Expenses();
         $exp->create($request->all());
-        flash()->success(__("Expense has been recorded"));
+        flash()->success(__('Expense has been recorded'));
         return redirect()->back();
     }
 
@@ -84,7 +80,7 @@ class ExpensesController extends Controller
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $rules = [
             'name' => 'required|max:50',
@@ -97,7 +93,7 @@ class ExpensesController extends Controller
         unset($request['_token']);
 
         if (!is_numeric($request->task_id)) {
-            $request['task_id'] = NULL;
+            $request['task_id'] = null;
         }
 
         $exp = Expenses::findOrFail($id);
@@ -110,7 +106,7 @@ class ExpensesController extends Controller
         $exp->created_at = $request->created_at;
         $exp->save();
 
-        flash()->success(__("Expense record has been updated"));
+        flash()->success(__('Expense record has been updated'));
         return redirect('expenses');
     }
 
@@ -118,11 +114,11 @@ class ExpensesController extends Controller
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    function destroy($id)
+    public function destroy($id)
     {
         $exp = Expenses::findOrFail($id);
         $exp->delete();
-        flash()->success(__("Expense record has been deleted"));
+        flash()->success(__('Expense record has been deleted'));
         return redirect()->back();
     }
 
@@ -130,7 +126,7 @@ class ExpensesController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    function addCategory(Request $request)
+    public function addCategory(Request $request)
     {
         $rules = [
             'cat_name' => 'required|max:50',
@@ -141,7 +137,7 @@ class ExpensesController extends Controller
         }
         DB::table('expense_cats')->insert(['cat_name' => $request->cat_name]);
 
-        flash()->success(__("Expense category has been saved"));
+        flash()->success(__('Expense category has been saved'));
         return redirect()->back();
     }
 }

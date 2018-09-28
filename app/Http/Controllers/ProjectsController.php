@@ -24,38 +24,38 @@ class ProjectsController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:read-projects', ['only' => ['index', 'view', 'milestones', 'tasks', 'messages',
+        $this->middleware('permission:read projects', ['only' => ['index', 'view', 'milestones', 'tasks', 'messages',
             'createMessage', 'files', 'downloadFile']]);
-        $this->middleware('permission:create-projects', ['only' => ['createProject']]);
-        $this->middleware('permission:update-projects', ['only' => ['editProject', 'editMilestone', 'updateMilestone',
+        $this->middleware('permission:create projects', ['only' => ['createProject']]);
+        $this->middleware('permission:update projects', ['only' => ['editProject', 'editMilestone', 'updateMilestone',
             'deleteMilestone', 'payTask', 'deleteMessage', 'uploadFile']]);
-        $this->middleware('permission:delete-projects', ['only' => ['deleteProject']]);
+        $this->middleware('permission:delete projects', ['only' => ['deleteProject']]);
 
         //files
-        $this->middleware('permission:create-project-files', ['only' => ['uploadFile']]);
-        $this->middleware('permission:read-project-files', ['only' => ['files', 'downloadFile']]);
-        $this->middleware('permission:delete-project-files', ['only' => ['deleteFile']]);
+        $this->middleware('permission:create project-files', ['only' => ['uploadFile']]);
+        $this->middleware('permission:read project-files', ['only' => ['files', 'downloadFile']]);
+        $this->middleware('permission:delete project-files', ['only' => ['deleteFile']]);
 
         //messages
-        $this->middleware('permission:create-project-messages', ['only' => ['createMessage']]);
-        $this->middleware('permission:read-project-messages', ['only' => ['messages']]);
-        $this->middleware('permission:update-project-messages', ['only' => ['replyMessage']]);
-        $this->middleware('permission:delete-project-messages', ['only' => ['deleteMessage']]);
+        $this->middleware('permission:create project-messages', ['only' => ['createMessage']]);
+        $this->middleware('permission:read project-messages', ['only' => ['messages']]);
+        $this->middleware('permission:update project-messages', ['only' => ['replyMessage']]);
+        $this->middleware('permission:delete project-messages', ['only' => ['deleteMessage']]);
 
         //milestones
-        $this->middleware('permission:create-project-milestones', ['only' => ['createMilestone']]);
-        $this->middleware('permission:read-project-milestones', ['only' => ['milestones']]);
-        $this->middleware('permission:update-project-milestones', ['only' => ['editMilestone', 'updateMilestone']]);
-        $this->middleware('permission:delete-project-milestones', ['only' => ['deleteMilestone']]);
+        $this->middleware('permission:create project-milestones', ['only' => ['createMilestone']]);
+        $this->middleware('permission:read project-milestones', ['only' => ['milestones']]);
+        $this->middleware('permission:update project-milestones', ['only' => ['editMilestone', 'updateMilestone']]);
+        $this->middleware('permission:delete project-milestones', ['only' => ['deleteMilestone']]);
 
         //members
-        $this->middleware('permission:read-project-members', ['only' => ['members']]);
+        $this->middleware('permission:read project-members', ['only' => ['members']]);
 
         //tasks
-        $this->middleware('permission:create-project-tasks', ['only' => ['createTask']]);
-        $this->middleware('permission:read-project-tasks', ['only' => ['tasks']]);
-        $this->middleware('permission:update-project-tasks', ['only' => ['editTask', 'updateTaskStatus', 'updateTask']]);
-        $this->middleware('permission:delete-project-tasks', ['only' => ['deleteProject']]);
+        $this->middleware('permission:create project-tasks', ['only' => ['createTask']]);
+        $this->middleware('permission:read project-tasks', ['only' => ['tasks']]);
+        $this->middleware('permission:update project-tasks', ['only' => ['editTask', 'updateTaskStatus', 'updateTask']]);
+        $this->middleware('permission:delete project-tasks', ['only' => ['deleteProject']]);
     }
 
     /**
@@ -117,7 +117,7 @@ class ProjectsController extends Controller
         $p->p_start = $request->p_start;
         $p->p_end = $request->p_end;
         $p->p_status = $request->p_status;
-        $p->created_by = Auth::user()->id;
+        $p->created_by = auth()->user()->id;
         $p->created_at = date('Y-m-d H:i:s');
         $p->save();
         flash()->success(__("Project has been created"));
@@ -218,7 +218,7 @@ class ProjectsController extends Controller
         $m->m_start = $request->m_start;
         $m->m_end = $request->m_end;
         $m->created_at = date('Y-m-d H:i:s');
-        $m->created_by = Auth::user()->id;
+        $m->created_by = auth()->user()->id;
         $m->m_status = $request->m_status;
         $m->save();
 
@@ -419,7 +419,7 @@ class ProjectsController extends Controller
         }
 
         $exp = new Expenses();
-        $exp->user_id = Auth::user()->id;
+        $exp->user_id = auth()->user()->id;
         $exp->name = $task->task_name;
         $exp->task_id = $id;
         $exp->amount = $task->actual_cost;
@@ -475,7 +475,7 @@ class ProjectsController extends Controller
         }
 
         $msg = new ProjectMessages();
-        $msg->user_id = Auth::user()->id;
+        $msg->user_id = auth()->user()->id;
         $msg->message = $request->message;
         $msg->created_at = date('Y-m-d H:i:s');
         $msg->project_id = $request->project_id;
@@ -501,7 +501,7 @@ class ProjectsController extends Controller
 
         $msg = new ProjectMessages();
         $msg->parent_id = $id;
-        $msg->user_id = Auth::user()->id;
+        $msg->user_id = auth()->user()->id;
         $msg->message = $request->message;
         $msg->created_at = date('Y-m-d H:i:s');
         $msg->project_id = $request->project_id;
@@ -560,7 +560,7 @@ class ProjectsController extends Controller
         $file->path = str_replace('public/', '', $pFile);
 
         $file->size = $request->file->getClientSize();
-        $file->user_id = Auth::user()->id;
+        $file->user_id = auth()->user()->id;
         $file->save();
 
         flash()->success(__("File has been uploaded"));

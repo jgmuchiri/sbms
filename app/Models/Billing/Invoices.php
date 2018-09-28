@@ -7,23 +7,25 @@ use Dompdf\Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Spatie\Permission\Traits\HasRoles;
 
 class Invoices extends Model
 {
+    use HasRoles;
+
+    protected $guard_name = 'web';
+
     //
     public static function invoiceBalance($invoice_id)
     {
-
     }
 
-    function invoiceItems($invoice_id)
+    public function invoiceItems($invoice_id)
     {
-
     }
 
-    function invoicePayments($invoice_id)
+    public function invoicePayments($invoice_id)
     {
-
     }
 
     /**
@@ -38,7 +40,7 @@ class Invoices extends Model
         $price = 0;
 
         foreach ($inv as $i) {
-            $price = $price + ($i->itemQty* $i->itemPrice);
+            $price = $price + ($i->itemQty * $i->itemPrice);
         }
         return $price;
     }
@@ -55,10 +57,11 @@ class Invoices extends Model
 
         $totalTax = Invoices::select('tax')->whereId($invoice_id)->first();
 
-        if ($totalTax == null)
+        if ($totalTax == null) {
             $tax = 0;
-        else
+        } else {
             $tax = number_format($totalTax->tax * $subTotal / 100, 2);
+        }
 
         $total = $tax + $subTotal;
 
@@ -78,10 +81,11 @@ class Invoices extends Model
             $paid = InvoicePayments::select('invoice_id', 'txn_amount', 'txn_tax')->get();
             $totalPaid = 0;
             foreach ($paid as $p) {
-                if ($p->txn_tax == null)
+                if ($p->txn_tax == null) {
                     $pTax = 0;
-                else
+                } else {
                     $pTax = number_format($p->txn_tax * $p->txn_amount / 100, 2);
+                }
                 $totalPaid += $p->txn_amount + $pTax;
             }
             return $totalPaid;
@@ -94,10 +98,11 @@ class Invoices extends Model
         foreach ($invoices as $invoice) {
             $subTotal = self::subTotal($invoice->id);
 
-            if ($invoice->tax == null)
+            if ($invoice->tax == null) {
                 $tax = 0;
-            else
+            } else {
                 $tax = number_format($invoice->tax * $subTotal / 100, 2);
+            }
 
             $total += $tax + $subTotal;
 
@@ -106,10 +111,11 @@ class Invoices extends Model
             if ($status == 'due' || $status == 'overdue') {
                 $paid = InvoicePayments::select('invoice_id', 'txn_amount', 'txn_tax')->whereInvoiceId($invoice->id)->get();
                 foreach ($paid as $p) {
-                    if ($p->txn_tax == null)
+                    if ($p->txn_tax == null) {
                         $pTax = 0;
-                    else
+                    } else {
                         $pTax = number_format($p->txn_tax * $p->txn_amount / 100, 2);
+                    }
                     $totalPaid += $p->txn_amount + $pTax;
                 }
             }
@@ -125,8 +131,9 @@ class Invoices extends Model
     public static function totalPaid($invoice_id)
     {
         $inv = InvoicePayments::select('txn_amount')->where('invoice_id', $invoice_id)->sum('txn_amount');
-        if ($inv == null)
+        if ($inv == null) {
             return 0;
+        }
         return $inv;
     }
 
@@ -147,9 +154,9 @@ class Invoices extends Model
     public static function convertToCents($value)
     {
         // strip out commas
-        $value = preg_replace("/\,/i", "", $value);
+        $value = preg_replace("/\,/i", '', $value);
         // strip out all but numbers and dot
-        $value = preg_replace("/([^0-9\.])/i", "", $value);
+        $value = preg_replace("/([^0-9\.])/i", '', $value);
         // make sure we are dealing with a proper number now, no +.4393 or 3...304 or 76.5895,94
         if (!is_numeric($value)) {
             return 0.00;
@@ -166,29 +173,30 @@ class Invoices extends Model
      */
     public static function createCustomer($request)
     {
-
         if (env('APP_ENV') == 'local'):
-            \Stripe\Stripe::setApiKey(config('app.stripe_test_secret'));
-        else:
+            \Stripe\Stripe::setApiKey(config('app.stripe_test_secret')); else:
             \Stripe\Stripe::setApiKey(config('app.stripe_secret'));
         endif;
 
-        $customer = \Stripe\Customer::create(array(
-            "email" => $request->email,
-            "description" => 'customer for ' . config('app.name'),
-            "source" => $request->stripeToken
-        ));
+        $customer = \Stripe\Customer::create([
+            'email' => $request->email,
+            'description' => 'customer for ' . config('app.name'),
+            'source' => $request->stripeToken
+        ]);
 
         //alert admin
-        if ($customer->id !== null || $customer->id !== "") {
-            Mail::send('emails.billing.user-registered-stripe', [
-                'email' => $request->email,
-                'first_name' => $request->first_name
-            ],
+        if ($customer->id !== null || $customer->id !== '') {
+            Mail::send(
+                'emails.billing.user-registered-stripe',
+                [
+                    'email' => $request->email,
+                    'first_name' => $request->first_name
+                ],
                 function ($m) use ($request) {
                     $m->from(config('mail.from.address'), config('mail.from.name'));
                     $m->to(config('mail.from.address'), config('mail.from.name'))->subject('Notice: New user');
-                });
+                }
+            );
         }
 
         return $customer;
@@ -199,17 +207,19 @@ class Invoices extends Model
      */
     public static function sendThankYou($data)
     {
-        Mail::send('emails.billing.txn-thank-you', [
-            'email' => $data['email'],
-            'first_name' => $data['name'],
-            'amount' => $data['amount'],
-            'desc' => $data['desc']
-        ],
+        Mail::send(
+            'emails.billing.txn-thank-you',
+            [
+                'email' => $data['email'],
+                'first_name' => $data['name'],
+                'amount' => $data['amount'],
+                'desc' => $data['desc']
+            ],
             function ($m) use ($data) {
                 $m->from(config('mail.from.address'), config('mail.from.name'));
                 $m->to($data['email'], $data['name'])->subject(config('mail.from.name') . ' Receipt- Thank you!');
-            });
-
+            }
+        );
     }
 
     /**
@@ -293,14 +303,12 @@ class Invoices extends Model
 
     public static function status()
     {
-
         $collection = collect([
             ['id' => 'draft', 'name' => 'Draft'],
             ['id' => 'due', 'name' => 'Due'],
             ['id' => 'paid', 'name' => 'Paid'],
             ['id' => 'overdue', 'name' => 'Overdue']
         ]);
-
 
         return $collection;
     }

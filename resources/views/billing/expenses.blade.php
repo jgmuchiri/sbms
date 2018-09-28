@@ -65,19 +65,19 @@
                                     <i class="fa fa-cog"></i> @lang("Action") <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
-                                    @permission('update-expenses')
+                                    @can('update user')
                                     <li>
                                         <a href="/expenses/{{$expense->id}}/edit"><i class="fa fa-pencil-square-o"></i>
                                             @lang("Edit") </a>
                                     </li>
-                                    @endpermission
-                                    @permission('delete-expenses')
+                                    @endcan
+                                    @can('delete user')
                                     <li>
                                         <a href="/expenses/{{$expense->id}}/delete"
                                            class="delete text-danger">
                                             <i class="fa fa-times text-danger"></i> @lang("Delete")</a>
                                     </li>
-                                    @endpermission
+                                    @endcan
 
 
                                 </ul>

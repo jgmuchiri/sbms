@@ -10,14 +10,14 @@
             @if(isset($client))
                 <a href="/invoice" class="btn btn-default"><i class="fa fa-chevron-left"></i> </a>
             @endif
-            @ability('admin','create-invoices')
+            @can('create invoices')
             <a class="btn btn-warning" href="/invoice/create"><i class="fa fa-plus"></i>
                 @lang("New")</a>
             <a class="btn btn-info" href="/income"><i class="fa fa-dollar"></i>
                 @lang("Income")</a>
 
             <a href="/invoice/inventory" class="btn btn-default"><i class="fa fa-th-list"></i> @lang("Inventory")</a>
-            @endability
+            @endcan
         </div>
         <div class="col-sm-8">
             <button class="btn btn-sm btn-warning totalDue"></button>
@@ -39,9 +39,9 @@
                 <a class="btn btn-warning" href="?status=due">@lang("Due")</a>
                 <a class="btn btn-danger" href="?status=overdue">@lang("Overdue")</a>
                 <a class="btn btn-success" href="?status=paid">@lang("Paid")</a>
-                @ability('admin','create-invoices')
+                @can('create invoices')
                 <a class="btn btn-default" href="?status=draft">@lang("Draft")</a>
-                @endability
+                @endcan
             </div>
             <br/>
             <table class="table table-striped table-striped" id="table">

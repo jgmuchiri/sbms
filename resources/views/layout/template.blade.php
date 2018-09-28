@@ -14,6 +14,8 @@
 	<link href="/css/font-awesome.css" rel="stylesheet">
 	<link href="/css/sweetalert.css" rel="stylesheet">
 
+	<meta name="csrf-token" content="{{ csrf_token() }}">
+
 	@stack('styles')
 	<script src="/js/lumino.glyphs.js"></script>
 
@@ -45,32 +47,32 @@
 			</a>
 		</li>
 		<li><a href="/dashboard"><span class="fa fa-dashboard"></span> <span>@lang("Dashboard")</span></a></li>
-		@permission('read-invoices')
+		@can('read invoices')
 		<li><a href="/invoice"><span class="fa fa-money"></span> <span>@lang("Invoices")</span></a></li>
-		@endpermission
+		@endcan
 
-		@permission('read-projects')
+		@can('read projects')
 		<li><a href="/projects"><span class="fa fa-tasks"></span> <span>@lang("Projects")</span></a></li>
-		@endpermission
+		@endcan
 
-		@permission('read-expenses')
+		@can('read user')
 		<li><a href="/expenses"><span class="fa fa-cc-visa"></span> <span>@lang("Expenses")</span></a></li>
-		@endpermission
-		@permission('read-contacts')
+		@endcan
+		@can('read contacts')
 		<li><a href="/contacts"><span class="fa fa-group"></span> <span>@lang("Contacts")</span></a></li>
-		@endpermission
+		@endcan
 
-		@permission('read-users')
+		@can('read users')
 		<li><a href="/users"><span class="fa fa-users"></span> <span>@lang("Users")</span></a></li>
-		@endpermission
+		@endcan
 
 		@role('admin')
 		<li><a href="/roles"><span class="fa fa-key"></span> <span>@lang("Roles")/@lang("Permissions")</span></a></li>
 		@endrole
 
-		@permission('read-logs')
+		@can('Read logs')
 		<li><a href="/debug-log"><span class="fa fa-bug"></span> <span>@lang("Debug log")</span></a></li>
-		@endpermission
+		@endcan
 
 		<li><a href="/account/profile"><span class="fa fa-user"></span> <span>@lang("Profile")</span></a></li>
 

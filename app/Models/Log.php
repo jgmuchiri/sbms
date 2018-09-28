@@ -16,7 +16,7 @@ class Log extends Model
      */
     public static function add($event,$action=null,$category=null,$data=null){
         $log = new self;
-        $log->user_id = Auth::user()->id;
+        $log->user_id = auth()->user()->id;
         $log->action = $action;
         $log->event = $event;
         $log->category = $category;

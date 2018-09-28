@@ -2,16 +2,18 @@
 
 namespace App;
 
-
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\DB;
-use Laratrust\Traits\LaratrustUserTrait;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use LaratrustUserTrait;
+    use HasRoles;
+
     use Notifiable;
+
+    protected $guard_name = 'web';
     /**
      * The attributes that are mass assignable.
      *
@@ -42,18 +44,18 @@ class User extends Authenticatable
     public static function read($id, $items)
     {
         $user = self::whereId($id)->first();
-        if (count($user) == 0)
+        if (count($user) == 0) {
             return '';
+        }
 
-        $data = "";
+        $data = '';
         if (is_array(($items))) {
             foreach ($items as $item) {
                 $data .= $user->$item . ' ';
             }
         } else {
             if ($items == 'name'):
-                $data = $user->first_name . ' ' . $user->last_name;
-            else:
+                $data = $user->first_name . ' ' . $user->last_name; else:
                 $data = $user->$items;
             endif;
         }

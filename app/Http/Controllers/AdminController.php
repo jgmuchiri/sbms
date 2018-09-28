@@ -13,51 +13,47 @@ class AdminController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('role:admin', ['only' => ['settings', 'backupEnv', 'updateEnv', 'uploadLogo']]);
-        $this->middleware('permission:read-logs', ['only' => ['debug']]);
-        $this->middleware('permission:delete-logs', ['only' => ['emptyDebug']]);
+        $this->middleware('permission:Read logs', ['only' => ['debug']]);
+        $this->middleware('permission:delete logs', ['only' => ['emptyDebug']]);
     }
 
     /**
      * @return mixed
      */
-    function index()
+    public function index()
     {
-        $user = Auth::user();
-        if ($user->hasRole('admin') || $user->hasRole('manager')) {
+        if (auth()->user->hasRole('admin') || auth()->user->hasRole('manager')) {
             return view('admin.dashboard');
         } else {
             return redirect('account');
         }
-
     }
 
     /**
      * @return mixed
      */
-    function settings()
+    public function settings()
     {
-        $envFile = "../.env";
-        $fhandle = fopen($envFile, "rw");
+        $envFile = '../.env';
+        $fhandle = fopen($envFile, 'rw');
         $size = filesize($envFile);
-        $envContent = "";
+        $envContent = '';
         if ($size == 0) {
-            flash()->error(__("Your file is empty"));
+            flash()->error(__('Your file is empty'));
         } else {
             $envContent = fread($fhandle, $size);
             fclose($fhandle);
         }
         return view('admin.settings', compact('envContent'));
-
-
     }
 
     /**
      * @param Request $request
      * @return mixed
      */
-    function backupEnv(Request $request)
+    public function backupEnv(Request $request)
     {
-        $envFile = "../.env";
+        $envFile = '../.env';
         return response()->download($envFile, config('app.name') . '-ENV-' . date('Y-m-d_H-i') . '.txt');
     }
 
@@ -65,13 +61,13 @@ class AdminController extends Controller
      * @param Request $request
      * @return mixed
      */
-    function updateEnv(Request $request)
+    public function updateEnv(Request $request)
     {
-        $envFile = "../.env";
-        $fhandle = fopen($envFile, "w");
+        $envFile = '../.env';
+        $fhandle = fopen($envFile, 'w');
         fwrite($fhandle, $request->envContent);
         fclose($fhandle);
-        flash()->success(__("Settings have been update. Please verify that your application is working properly"));
+        flash()->success(__('Settings have been update. Please verify that your application is working properly'));
         return redirect()->back();
     }
 
@@ -85,15 +81,15 @@ class AdminController extends Controller
             $path = 'img/';
             $file = Input::file('logo');
             $extension = $file->getClientOriginalExtension();
-            if($extension == "jpg" || $extension =="JPG" || $extension=="png" || $extension=="PNG"){
+            if ($extension == 'jpg' || $extension == 'JPG' || $extension == 'png' || $extension == 'PNG') {
                 $fileName = 'logo.' . strtolower($extension);
                 $file->move($path, $fileName);
-                flash()->success(__("Logo uploaded updated!"));
-            }else{
-                flash()->error(__("Invalid image!"));
+                flash()->success(__('Logo uploaded updated!'));
+            } else {
+                flash()->error(__('Invalid image!'));
             }
-        }else{
-            flash()->error(__("Invalid image!"));
+        } else {
+            flash()->error(__('Invalid image!'));
         }
 
         return redirect()->back();
@@ -102,26 +98,24 @@ class AdminController extends Controller
     /**
      * @return View
      */
-    function debug()
+    public function debug()
     {
-
-        $dir = "../storage/logs/";
-        $logs =array();
-        foreach (glob($dir."*.*") as $filename) {
-            $logs[]= basename($filename,'.log');
+        $dir = '../storage/logs/';
+        $logs = [];
+        foreach (glob($dir . '*.*') as $filename) {
+            $logs[] = basename($filename, '.log');
         }
 
-
-        if(isset($_GET['log']) && $_GET['log'] !==""){
-            $logFile = "../storage/logs/".$_GET['log'].'.log';
-            if(!is_file($logFile)){
-                flash()->error(__("Your log file is empty"));
+        if (isset($_GET['log']) && $_GET['log'] !== '') {
+            $logFile = '../storage/logs/' . $_GET['log'] . '.log';
+            if (!is_file($logFile)) {
+                flash()->error(__('Your log file is empty'));
                 return redirect()->back();
             }
 
-            $fhandle = fopen($logFile, "rw");
+            $fhandle = fopen($logFile, 'rw');
             $size = filesize($logFile);
-            $logContent = "";
+            $logContent = '';
             if ($size == 0) {
                 flash()->error(__('Your log file is empty'));
             } else {
@@ -130,26 +124,22 @@ class AdminController extends Controller
             }
         }
 
-
-        return view('admin.debug-logs', compact('logs','logContent'));
+        return view('admin.debug-logs', compact('logs', 'logContent'));
     }
 
     /**
      * @return mixed
      */
-    function emptyDebugLog(Request $request)
+    public function emptyDebugLog(Request $request)
     {
-
-       if($request->has('log_date')) {
-           $logFile = "../storage/logs/" . $request->log_date . '.log';
-           if(!is_file($logFile)){
-               flash()->error(__("Your log file is empty"));
-           }
-           @unlink($logFile);
-       }
-        flash()->success(__("Debug log has been emptied"));
+        if ($request->has('log_date')) {
+            $logFile = '../storage/logs/' . $request->log_date . '.log';
+            if (!is_file($logFile)) {
+                flash()->error(__('Your log file is empty'));
+            }
+            @unlink($logFile);
+        }
+        flash()->success(__('Debug log has been emptied'));
         return redirect('debug-log');
     }
-
-
 }

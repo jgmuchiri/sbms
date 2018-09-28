@@ -237,7 +237,7 @@ class TransactionsController extends Controller
      */
     function subscriptions()
     {
-        $gifts = Subscription::whereUserId(Auth::user()->id)->get();
+        $gifts = Subscription::whereUserId(auth()->user()->id)->get();
         return view('transactions.recurring', compact('gifts'));
     }
 
@@ -250,7 +250,7 @@ class TransactionsController extends Controller
     {
         \Stripe\Stripe::setApiKey(config('app.stripe_secret'));
 
-        $subsc = Subscription::whereUserId(Auth::user()->id)->whereId($id)->first();
+        $subsc = Subscription::whereUserId(auth()->user()->id)->whereId($id)->first();
 
         if (count($subsc) > 0) {
             switch ($action) {

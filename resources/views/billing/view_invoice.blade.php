@@ -145,7 +145,7 @@
             <div class="col-md-4 no-print" style="border-left: solid 1px #ccc5b9;">
                 @if($invoice->totalDue >0)
                     <div class="row">
-                        @ability('admins','update-invoice')
+                        @can('update invoice')
                         <div class="col-sm-6">
                             <a href="{{url('/invoice/'.$invoice->id.'/email-reminder')}}"
                                style="width:100%"
@@ -154,7 +154,7 @@
                                 @lang("Send reminder")
                             </a>
                         </div>
-                        @endability
+                        @endcan
 
                         <div class="col-sm-6">
                             <a href="?pdf" class="btn btn-default" style="width:100%"><i

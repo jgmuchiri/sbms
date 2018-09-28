@@ -1,21 +1,21 @@
 <?php
 
 return [
-    'default_user'=>env('DEFAULT_USER','admin@app.com'),
-    'default_password'=>env('DEFAULT_PASSWORD','password'),
-    'company_name'=>env('COMPANY_NAME','AMDT'),
-    'currency'=>[
-        'abbr'=>env('CURRENCY','USD'),
-        'symbol'=>env('CURRENCY_SYMBOL','$')
+    'default_user' => env('DEFAULT_USER', 'admin@app.com'),
+    'default_password' => env('DEFAULT_PASSWORD', 'password'),
+    'company_name' => env('COMPANY_NAME', 'AMDT'),
+    'currency' => [
+        'abbr' => env('CURRENCY', 'USD'),
+        'symbol' => env('CURRENCY_SYMBOL', '$')
     ],
-    'company'=>[
-        'address'=>env('ADDRESS','123 State St<br/> New York, NY 12345'),
-        'phone'=>env('PHONE','+1 123 456 7890')
+    'company' => [
+        'address' => env('ADDRESS', '123 State St<br/> New York, NY 12345'),
+        'phone' => env('PHONE', '+1 123 456 7890')
     ],
-    'stripe_public'=>env('STRIPE_PUBLIC',''),
-    'stripe_secret'=>env('STRIPE_SECRET',''),
-    'stripe_test_public'=>env('STRIPE_TEST_PUBLIC',''),
-    'stripe_test_secret'=>env('STRIPE_TEST_SECRET',''),
+    'stripe_public' => env('STRIPE_PUBLIC', ''),
+    'stripe_secret' => env('STRIPE_SECRET', ''),
+    'stripe_test_public' => env('STRIPE_TEST_PUBLIC', ''),
+    'stripe_test_secret' => env('STRIPE_TEST_SECRET', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -27,7 +27,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => env('APP_NAME','SBMS'),
+    'name' => env('APP_NAME', 'SBMS'),
 
     /*
     |--------------------------------------------------------------------------
@@ -151,7 +151,6 @@ return [
     */
 
     'providers' => [
-
         /*
          * Laravel Framework Service Providers...
          */
@@ -194,12 +193,11 @@ return [
          */
         // App\Providers\BroadcastServiceProvider::class,
 
-        Collective\Html\HtmlServiceProvider::class,
-        Laracasts\Flash\FlashServiceProvider::class,
-        Barryvdh\DomPDF\ServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class,
-        Laratrust\LaratrustServiceProvider::class,
-        Laravel\Tinker\TinkerServiceProvider::class,
+        // Collective\Html\HtmlServiceProvider::class,
+        // Laracasts\Flash\FlashServiceProvider::class,
+        // Barryvdh\DomPDF\ServiceProvider::class,
+        // Intervention\Image\ImageServiceProvider::class,
+        // Laravel\Tinker\TinkerServiceProvider::class,
     ],
 
     /*
@@ -214,7 +212,6 @@ return [
     */
 
     'aliases' => [
-
         'App' => Illuminate\Support\Facades\App::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
@@ -253,7 +250,5 @@ return [
         'Flash' => Laracasts\Flash\Flash::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
         'Image' => Intervention\Image\Facades\Image::class,
-        'Trust'   => Laratrust\LaratrustFacade::class,
     ],
-
 ];

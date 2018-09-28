@@ -44,7 +44,7 @@ class LogsController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
         $log = new Log();
-        $log->user_id = Auth::user()->id;
+        $log->user_id = auth()->user()->id;
         $log->action = $request->action;
         $log->event = $request->event;
         $log->category = $request->category;

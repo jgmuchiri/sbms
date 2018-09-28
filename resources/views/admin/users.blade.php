@@ -99,7 +99,7 @@ $table = "$('#table').dataTable( {'pageLength': 50} );";
 
                         <div class="input-group">
                             <span class="input-group-addon">@lang("Role"):</span>
-                            {!! Form::select('role',DB::table('roles')->pluck('name','id')) !!}
+                            {!! Form::select('role',DB::table('roles')->pluck('name','name')) !!}
                         </div>
                         <br/>
                         <input type="submit" class="submit btn btn-success" value="Submit">

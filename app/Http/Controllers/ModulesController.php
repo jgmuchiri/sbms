@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Modules;
-use App\Permission;
-use App\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -12,12 +10,12 @@ use PhpParser\Node\Expr\AssignOp\Mod;
 
 class ModulesController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:create-modules', ['only' => ['create','store']]);
+        $this->middleware('permission:create-modules', ['only' => ['create', 'store']]);
         $this->middleware('permission:read-modules', ['only' => ['show']]);
-        $this->middleware('permission:update-modules', ['only' => ['edit','update']]);
+        $this->middleware('permission:update-modules', ['only' => ['edit', 'update']]);
         $this->middleware('permission:delete-modules', ['only' => ['destroy']]);
     }
 
@@ -58,7 +56,7 @@ class ModulesController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
         Modules::create(['name' => str_clean($request->name)]);
-        flash()->success(__("Module has been registered"));
+        flash()->success(__('Module has been registered'));
         return redirect()->back();
     }
 
@@ -72,7 +70,7 @@ class ModulesController extends Controller
     {
         if (request()->ajax()) {
             $mod = Modules::find($id);
-            return json_encode(['id'=>$id,'name'=>$mod->name]);
+            return json_encode(['id' => $id, 'name' => $mod->name]);
         }
     }
 
@@ -106,7 +104,7 @@ class ModulesController extends Controller
         $mod = Modules::find($id);
         $mod->name = $request->name;
         $mod->save();
-        flash()->success(__("Module has been registered"));
+        flash()->success(__('Module has been registered'));
         return redirect()->back();
     }
 

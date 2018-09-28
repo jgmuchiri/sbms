@@ -4,20 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\Billing\Membership;
 use App\Models\Modules;
-use App\Permission;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
-
 use Illuminate\Support\Facades\Mail;
-
-use App\Models\PermissionRole;
-
-use App\Role;
 
 class AuthController extends Controller
 {
@@ -26,16 +19,17 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['login','confirmAccount']]);
-        $this->middleware('role:admin', ['only' => ['updateRolePermissions','permissions','roles','showRole','UpdateRole']]);
-        $this->middleware('permission:create-users', ['only' => ['createUser']]);
+        $this->middleware('auth', ['except' => ['login', 'confirmAccount']]);
+        $this->middleware('role:admin', ['only' => ['updateRolePermissions', 'permissions', 'roles', 'showRole', 'UpdateRole']]);
+        $this->middleware('permission:create users', ['only' => ['createUser']]);
     }
 
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    function login(Request $request){
+    public function login(Request $request)
+    {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             return redirect('account');
         }
@@ -46,11 +40,12 @@ class AuthController extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    function getLogout()
+    public function getLogout()
     {
         Auth::logout();
         return redirect('/');
     }
+
     /**
      * @param $confirmation_code
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
@@ -77,32 +72,33 @@ class AuthController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    function permissions($role_id, $module_id)
+    public function permissions($role_id, $module_id)
     {
         if (request()->ajax()) {
             $module = Modules::find($module_id);
             $levels = ['create', 'read', 'update', 'delete'];
-            $rolePerms = array();
+            $rolePerms = [];
             foreach ($levels as $level) {
                 $perm = Permission::where('name', $level . '-' . $module->name)->first();
                 $role = null;
-                if (count($perm) > 0)
+                if (count($perm) > 0) {
                     $role = DB::table('permission_role')->where('role_id', $role_id)->where('permission_id', $perm->id)->first();
-                if ($role == null)
+                }
+                if ($role == null) {
                     $selected = false;
-                else
+                } else {
                     $selected = true;
-                $rolePerms[] = array(
+                }
+                $rolePerms[] = [
                     'selected' => $selected,
                     'level' => $level
-                );
+                ];
             }
-            return view('admin.permissions', compact('rolePerms','module'));
+            return view('admin.permissions', compact('rolePerms', 'module'));
         }
     }
 
-
-    function updateRolePermissions(Request $request)
+    public function updateRolePermissions(Request $request)
     {
         if ($request->ajax()) {
             $role = $request->role;
@@ -132,41 +128,40 @@ class AuthController extends Controller
 
             echo json_encode(['status' => 'success', 'message' => __('Role permissions updated')]);
         }
-
     }
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    function roles()
+    public function roles()
     {
         $roles = Role::all();
         $modules = Modules::all();
         return view('admin.roles', compact('roles', 'modules'));
     }
 
-    function showRole(Request $request)
+    public function showRole(Request $request)
     {
         if ($request->ajax()) {
             $role = Role::find($request->role_id);
-            $data = array(
+            $data = [
                 'name' => $role->name,
                 'display_name' => $role->display_name,
                 'desc' => $role->desc
-            );
+            ];
             return $data;
         }
     }
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    function newRole(Request $request)
+    public function newRole(Request $request)
     {
         $rules = [
             'name' => 'required|max:50|unique:roles',
             'display_name' => 'required|max:50|unique:roles'
-
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -184,9 +179,10 @@ class AuthController extends Controller
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    function updateRole(Request $request,$id){
+    public function updateRole(Request $request, $id)
+    {
         $rules = [
-            'display_name' => 'required|max:50|unique:roles,display_name,'.$id
+            'display_name' => 'required|max:50|unique:roles,display_name,' . $id
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -201,12 +197,13 @@ class AuthController extends Controller
         flash()->success(__('Role updated'));
         return redirect()->back();
     }
+
     /**
      * capture user submitted data
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    function quickSignUp(Request $request)
+    public function quickSignUp(Request $request)
     {
         $rules = [
             'email' => 'required|max:50|email|unique:users_temp',
@@ -217,19 +214,17 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             //stay silent
-
         } else {
             //capture data
-            $data = array(
+            $data = [
                 'first_name' => $request->name,
                 'last_name' => $request->last_name,
                 'email' => $request->email,
                 'other' => $request->other,
                 'created_at' => date('Y-m-d H:i:s')
-            );
+            ];
             DB::table('users_temp')->insert($data);
         }
-
 
         return view('auth.template');
     }
@@ -243,16 +238,18 @@ class AuthController extends Controller
      */
     protected function createUser(Request $request)
     {
-        $validator = Validator::make($request->all(),
+        $validator = Validator::make(
+            $request->all(),
             [
                 'username' => 'required|max:50|unique:users',
                 'email' => 'required|email|max:255|unique:users',
                 'password' => 'required|confirmed|min:6',
                 'name' => 'required',
                 'phone' => 'required'
-            ]);
+            ]
+        );
         if ($validator->fails()) {
-            flash()->error(__('Error').'!'.__("Check fields and try again"));
+            flash()->error(__('Error') . '!' . __('Check fields and try again'));
             return redirect('/login')->withErrors($validator)->withInput();
         }
 
@@ -266,7 +263,7 @@ class AuthController extends Controller
         $user->phone = $request->phone;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
-        $user->name =$request->name;
+        $user->name = $request->name;
         $user->created_at = date('Y-m-d H:i:s');
         $user->confirmation_code = $confirmation_code;
         $user->save();
@@ -279,8 +276,10 @@ class AuthController extends Controller
 
         //notify user to activate account
         Mail::send('emails.accounts-verify', ['confirmation_code' => $confirmation_code], function ($m) use ($request) {
-            $m->from(env('EMAIL_FROM_ADDRESS'),
-                config('app.name'));
+            $m->from(
+                env('EMAIL_FROM_ADDRESS'),
+                config('app.name')
+            );
 
             $m->to($request['email'], $request['first_name'])->subject('Verify your email address');
         });
@@ -288,29 +287,29 @@ class AuthController extends Controller
         //subscribe to mailchimp
         //Newsletter::subscribe($request['email'],['firstName'=>$request['first_name']]);
 
-        flash()->success(__("Thanks for signing up").__("Please check your email"));
+        flash()->success(__('Thanks for signing up') . __('Please check your email'));
 
         return redirect('login');
-
     }
-
 
     /**
      * allows posting email to send verification
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    function resendConfirmation(Request $request)
+    public function resendConfirmation(Request $request)
     {
         if ($request->email !== null) { //post has email
             $user = User::whereEmail($request->email)->first();
         } else {
-            if (Auth::guest()) return redirect('login');
-            $user = User::find(Auth::user()->id);
+            if (Auth::guest()) {
+                return redirect('login');
+            }
+            $user = User::find(auth()->user()->id);
         }
 
         if ($user->confirmed == 1) {//check if its verified
-            flash()->success(__("This account is already verified"));
+            flash()->success(__('This account is already verified'));
             return redirect('account');
         }
 
@@ -320,9 +319,9 @@ class AuthController extends Controller
         }
         Mail::send('emails.accounts-verify', ['confirmation_code' => $user->confirmation_code], function ($m) use ($request, $user) {
             $m->from(env('EMAIL_FROM_ADDRESS'), config('app.name'));
-            $m->to($user->email, $user->first_name)->subject(__("Verify your email address"));
+            $m->to($user->email, $user->first_name)->subject(__('Verify your email address'));
         });
-        flash()->success(__("Please check  email to verify your account"));
+        flash()->success(__('Please check  email to verify your account'));
         return redirect()->back();
     }
 }

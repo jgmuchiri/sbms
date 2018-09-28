@@ -69,14 +69,14 @@ $("#addRowBtn").on('click', function (e) {
 });
 
 /*
- Update invoice total when item Qty or Price inputs have been updated
+ update invoice total when item Qty or Price inputs have been updated
  */
 $(itemQtyPriceSelectors).on('keyup', function () {
     mioInvoice.updatePrice(this);
 });
 
 /*
- Update invoice total when invoice tax input has changed
+ update invoice total when invoice tax input has changed
  */
 $("input#tax").on('keyup', function () {
     mioInvoice.updateTotal();

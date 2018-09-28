@@ -18,10 +18,10 @@ class ContactsController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:read-contacts',['only'=>['index','ajaxViewGroups']]);
-        $this->middleware('permission:create-contacts', ['only' => ['store','createGroup','updateGroup']]);
-        $this->middleware('permission:update-contacts', ['only' => ['edit','update','assignContactToGroup']]);
-        $this->middleware('permission:delete-contacts', ['only' => ['destroy','destroyGroup']]);
+        $this->middleware('permission:read contacts',['only'=>['index','ajaxViewGroups']]);
+        $this->middleware('permission:create contacts', ['only' => ['store','createGroup','updateGroup']]);
+        $this->middleware('permission:Update contacts', ['only' => ['edit','update','assignContactToGroup']]);
+        $this->middleware('permission:delete contacts', ['only' => ['destroy','destroyGroup']]);
     }
 
     /**

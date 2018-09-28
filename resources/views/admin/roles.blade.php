@@ -78,15 +78,15 @@
             <div class="modal-body">
                 @lang("When you create new modules, add them here and assign permissions. For example if module is")
                 <code>@lang("users")</code>, @lang("then permissions are generated as")
-                <code>@lang("create-users")</code>
-                <code>@lang("read-users")</code>
-                <code>@lang("update-users")</code>
-                <code>@lang("delete-users")</code>.
+                <code>@lang("create users")</code>
+                <code>@lang("read users")</code>
+                <code>@lang("update users")</code>
+                <code>@lang("delete users")</code>.
                 @lang("In your module code, you can define access using")
                 <div class="row">
                     <div class="col-sm-5">
                         <code>
-                            if(\Trust::can('create-users')<br/>
+                            if(can('create users')<br/>
                             &nbsp; &nbsp; &nbsp;---@lang("your code here")---<br/>
                             &nbsp;endif
                         </code>
@@ -94,7 +94,7 @@
                     <div class="col-sm-2">or</div>
                     <div class="col-sm-5">
                         <code>
-                            &commat;if(permission('create-users')<br/>
+                            &commat;if(permission('create users')<br/>
                             &nbsp; &nbsp; &nbsp;---@lang("your code here")---<br/>
                             &nbsp;&commat;endif
                         </code>
