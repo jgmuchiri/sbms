@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\View;
 
 Auth::routes();
 Route::group(['middleware' => ['web']], function () {
-    if (Auth::guest()) {
+    if (auth()->guest()) {
         Route::get('/', function () {
             return view('auth.login');
         });
@@ -81,6 +81,7 @@ Route::group(['middleware' => ['web']], function () {
 
     //Permisions
     Route::post('revoke-permission', 'UserController@revokePermission');
+    Route::get('role/{id}/{perm}/revoke', 'UserController@revokeRolePermission');
 
     //routes for all
     Route::group(['prefix' => 'account'], function () {

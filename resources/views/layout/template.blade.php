@@ -66,10 +66,6 @@
 		<li><a href="/users"><span class="fa fa-users"></span> <span>@lang("Users")</span></a></li>
 		@endcan
 
-		@role('admin')
-		<li><a href="/roles"><span class="fa fa-key"></span> <span>@lang("Roles")/@lang("Permissions")</span></a></li>
-		@endrole
-
 		@can('Read logs')
 		<li><a href="/debug-log"><span class="fa fa-bug"></span> <span>@lang("Debug log")</span></a></li>
 		@endcan

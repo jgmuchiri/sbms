@@ -284,6 +284,14 @@ class UserController extends Controller
         return response()->json(['state' => 'success'], 200);
     }
 
+    public function revokeRolePermission($id, $perm)
+    {
+        $role = Role::find($id);
+        $permission = Permission::find($perm);
+        $role->revokePermissionTo($permission->name);
+        return redirect()->back();
+    }
+
     /**
      * find users
      */
