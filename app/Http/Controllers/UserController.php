@@ -275,6 +275,7 @@ class UserController extends Controller
         flash()->success(__('request_success'));
         return redirect('users/' . $id . '/view#permissions');
     }
+<<<<<<< HEAD
 
     public function revokePermission(Request $request)
     {
@@ -290,6 +291,15 @@ class UserController extends Controller
         $permission = Permission::find($perm);
         $role->revokePermissionTo($permission->name);
         return redirect()->back();
+=======
+
+    public function revokePermission(Request $request)
+    {
+        $user = User::find($request->user_id);
+        $user->revokePermissionTo($request->perm_name);
+        flash('success', __('request_success'));
+        return response()->json(['state' => 'success'], 200);
+>>>>>>> roles
     }
 
     /**
