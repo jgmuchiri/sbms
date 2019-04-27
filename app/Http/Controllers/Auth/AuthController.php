@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\Billing\Membership;
 use App\Models\Modules;
+use App\Role;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,23 +14,24 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
+
     /**
      *
      */
     public function __construct()
     {
         $this->middleware('auth', ['except' => ['login', 'confirmAccount']]);
-        $this->middleware('role:admin', ['only' => ['updateRolePermissions', 'permissions', 'roles', 'showRole', 'UpdateRole']]);
-        $this->middleware('permission:create users', ['only' => ['createUser']]);
+        $this->middleware('role:admin', ['except' => ['login', 'confirmAccount'],]);
     }
 
     /**
      * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function login(Request $request)
     {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             return redirect('account');
         }
         flash()->error(__('Username or password is incorrect'));
@@ -48,21 +49,22 @@ class AuthController extends Controller
 
     /**
      * @param $confirmation_code
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function confirmAccount($confirmation_code)
     {
-        if (!$confirmation_code) {
+        if(!$confirmation_code) {
             flash()->error(__('No confirmation code found'));
             return redirect('/');
         }
         $user = User::whereConfirmationCode($confirmation_code)->first();
-        if (!$user) {
+        if(!$user) {
             flash()->error(__('Confirmation code is invalid or expired'));
             return redirect('/');
         }
         $user->confirmed = 1;
-        $user->confirmation_code = null;
+        $user->confirmation_code = NULL;
         $user->save();
 
         flash()->success(__('You have successfully verified your account'));
@@ -72,99 +74,25 @@ class AuthController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function permissions($role_id, $module_id)
-    {
-        if (request()->ajax()) {
-            $module = Modules::find($module_id);
-            $levels = ['create', 'read', 'update', 'delete'];
-            $rolePerms = [];
-            foreach ($levels as $level) {
-                $perm = Permission::where('name', $level . '-' . $module->name)->first();
-                $role = null;
-                if (count($perm) > 0) {
-                    $role = DB::table('permission_role')->where('role_id', $role_id)->where('permission_id', $perm->id)->first();
-                }
-                if ($role == null) {
-                    $selected = false;
-                } else {
-                    $selected = true;
-                }
-                $rolePerms[] = [
-                    'selected' => $selected,
-                    'level' => $level
-                ];
-            }
-            return view('admin.permissions', compact('rolePerms', 'module'));
-        }
-    }
-
-    public function updateRolePermissions(Request $request)
-    {
-        if ($request->ajax()) {
-            $role = $request->role;
-            $module = Modules::find($request->module);
-            $perms = $request->permissions;
-            if (is_array($perms)) {
-                //flush all permissions for this module
-                $ps = ['create', 'update', 'read', 'delete'];
-                foreach ($ps as $p) {
-                    $permission = $p . '-' . $module->name;
-                    $res = Permission::firstOrCreate(['name' => $permission, 'display_name' => ucwords($p) . ' ' . ucwords($module->name)]);
-                    PermissionRole::where('permission_id', $res->id)->where('role_id', $role)->delete();
-                }
-                //assign new
-                foreach ($perms as $perm) {
-                    $permission = $perm . '-' . $module->name;
-                    //find the permission
-                    $p = Permission::where('name', $permission)->first();
-                    DB::table('permission_role')->insert([
-                        'permission_id' => $p->id,
-                        'role_id' => $role
-                    ]);
-                }
-            } else {
-                DB::table('permission_role')->where('role_id', $role)->delete();
-            }
-
-            echo json_encode(['status' => 'success', 'message' => __('Role permissions updated')]);
-        }
-    }
-
-    /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
     public function roles()
     {
         $roles = Role::all();
-        $modules = Modules::all();
-        return view('admin.roles', compact('roles', 'modules'));
-    }
-
-    public function showRole(Request $request)
-    {
-        if ($request->ajax()) {
-            $role = Role::find($request->role_id);
-            $data = [
-                'name' => $role->name,
-                'display_name' => $role->display_name,
-                'desc' => $role->desc
-            ];
-            return $data;
-        }
+        return view('admin.roles', compact('roles'));
     }
 
     /**
      * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function newRole(Request $request)
     {
         $rules = [
             'name' => 'required|max:50|unique:roles',
-            'display_name' => 'required|max:50|unique:roles'
+            'display_name' => 'required|max:50|unique:roles',
         ];
         $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
+        if($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
         $request->name = str_clean($request->name);
@@ -176,16 +104,17 @@ class AuthController extends Controller
 
     /**
      * @param Request $request
-     * @param $id
+     * @param         $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateRole(Request $request, $id)
     {
         $rules = [
-            'display_name' => 'required|max:50|unique:roles,display_name,' . $id
+            'display_name' => 'required|max:50|unique:roles,display_name,'.$id,
         ];
         $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
+        if($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
@@ -200,19 +129,21 @@ class AuthController extends Controller
 
     /**
      * capture user submitted data
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function quickSignUp(Request $request)
     {
         $rules = [
             'email' => 'required|max:50|email|unique:users_temp',
-            'phone' => 'unique:users_temp'
+            'phone' => 'unique:users_temp',
         ];
 
         $validator = Validator::make($request->all(), $rules);
 
-        if ($validator->fails()) {
+        if($validator->fails()) {
             //stay silent
         } else {
             //capture data
@@ -221,7 +152,7 @@ class AuthController extends Controller
                 'last_name' => $request->last_name,
                 'email' => $request->email,
                 'other' => $request->other,
-                'created_at' => date('Y-m-d H:i:s')
+                'created_at' => date('Y-m-d H:i:s'),
             ];
             DB::table('users_temp')->insert($data);
         }
@@ -233,6 +164,7 @@ class AuthController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param Request $request
+     *
      * @return User
      * @internal param array $data
      */
@@ -245,11 +177,11 @@ class AuthController extends Controller
                 'email' => 'required|email|max:255|unique:users',
                 'password' => 'required|confirmed|min:6',
                 'name' => 'required',
-                'phone' => 'required'
+                'phone' => 'required',
             ]
         );
-        if ($validator->fails()) {
-            flash()->error(__('Error') . '!' . __('Check fields and try again'));
+        if($validator->fails()) {
+            flash()->error(__('Error').'!'.__('Check fields and try again'));
             return redirect('/login')->withErrors($validator)->withInput();
         }
 
@@ -268,9 +200,6 @@ class AuthController extends Controller
         $user->confirmation_code = $confirmation_code;
         $user->save();
 
-        //add to default role
-        $user->attachRole('user');
-
         //delete if in temp table
         DB::table('users_temp')->where('email', $request->email)->delete();
 
@@ -287,33 +216,35 @@ class AuthController extends Controller
         //subscribe to mailchimp
         //Newsletter::subscribe($request['email'],['firstName'=>$request['first_name']]);
 
-        flash()->success(__('Thanks for signing up') . __('Please check your email'));
+        flash()->success(__('Thanks for signing up').__('Please check your email'));
 
         return redirect('login');
     }
 
     /**
      * allows posting email to send verification
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function resendConfirmation(Request $request)
     {
-        if ($request->email !== null) { //post has email
+        if($request->email !== NULL) { //post has email
             $user = User::whereEmail($request->email)->first();
         } else {
-            if (Auth::guest()) {
+            if(Auth::guest()) {
                 return redirect('login');
             }
             $user = User::find(auth()->user()->id);
         }
 
-        if ($user->confirmed == 1) {//check if its verified
+        if($user->confirmed == 1) {//check if its verified
             flash()->success(__('This account is already verified'));
             return redirect('account');
         }
 
-        if ($user->confirmation_code == null) {
+        if($user->confirmation_code == NULL) {
             $user->confirmation_code = sha1(time());
             $user->save();
         }

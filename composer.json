@@ -21,7 +21,6 @@
     "laravelcollective/html": "^5.7",
     "league/omnipay": "^3.0",
     "omnipay/paypal": "^3.0",
-    "spatie/laravel-permission": "^2.20",
     "stripe/stripe-php": "~5.9.2"
   },
   "require-dev": {

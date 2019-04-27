@@ -24,38 +24,7 @@ class ProjectsController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:read projects', ['only' => ['index', 'view', 'milestones', 'tasks', 'messages',
-            'createMessage', 'files', 'downloadFile']]);
-        $this->middleware('permission:create projects', ['only' => ['createProject']]);
-        $this->middleware('permission:update projects', ['only' => ['editProject', 'editMilestone', 'updateMilestone',
-            'deleteMilestone', 'payTask', 'deleteMessage', 'uploadFile']]);
-        $this->middleware('permission:delete projects', ['only' => ['deleteProject']]);
-
-        //files
-        $this->middleware('permission:create project-files', ['only' => ['uploadFile']]);
-        $this->middleware('permission:read project-files', ['only' => ['files', 'downloadFile']]);
-        $this->middleware('permission:delete project-files', ['only' => ['deleteFile']]);
-
-        //messages
-        $this->middleware('permission:create project-messages', ['only' => ['createMessage']]);
-        $this->middleware('permission:read project-messages', ['only' => ['messages']]);
-        $this->middleware('permission:update project-messages', ['only' => ['replyMessage']]);
-        $this->middleware('permission:delete project-messages', ['only' => ['deleteMessage']]);
-
-        //milestones
-        $this->middleware('permission:create project-milestones', ['only' => ['createMilestone']]);
-        $this->middleware('permission:read project-milestones', ['only' => ['milestones']]);
-        $this->middleware('permission:update project-milestones', ['only' => ['editMilestone', 'updateMilestone']]);
-        $this->middleware('permission:delete project-milestones', ['only' => ['deleteMilestone']]);
-
-        //members
-        $this->middleware('permission:read project-members', ['only' => ['members']]);
-
-        //tasks
-        $this->middleware('permission:create project-tasks', ['only' => ['createTask']]);
-        $this->middleware('permission:read project-tasks', ['only' => ['tasks']]);
-        $this->middleware('permission:update project-tasks', ['only' => ['editTask', 'updateTaskStatus', 'updateTask']]);
-        $this->middleware('permission:delete project-tasks', ['only' => ['deleteProject']]);
+        $this->middleware('role:admin,manager,staff');
     }
 
     /**

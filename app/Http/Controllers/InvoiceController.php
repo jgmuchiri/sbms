@@ -36,20 +36,7 @@ class InvoiceController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:read invoices', ['only' => ['index', 'client', 'viewInvoice', 'payInvoice', 'manualPay', 'stripePay'
-        ]]);
-        $this->middleware('permission:create invoices', ['only' => ['create', 'storeInvoice', 'replicateInvoice']]);
-        $this->middleware('permission:update invoices', ['only' => [
-            'editInvoice',
-            'updateInvoice',
-            'invoiceRemoveItem',
-            'sendToEmail',
-            'inventoryJson',
-            'inventory',
-            'addInventory',
-            'deleteInventory'
-        ]]);
-        $this->middleware('permission:delete  invoices', ['only' => ['deleteInvoice']]);
+        $this->middleware('role:admin,manager,staff');
     }
 
     /**

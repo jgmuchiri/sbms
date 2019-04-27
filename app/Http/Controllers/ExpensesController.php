@@ -16,10 +16,7 @@ class ExpensesController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:create user', ['only' => ['store', 'addCategory']]);
-        $this->middleware('permission:read user', ['only' => ['index']]);
-        $this->middleware('permission:update user', ['only' => ['update']]);
-        $this->middleware('permission:delete user', ['only' => ['destroy']]);
+        $this->middleware('role:admin,manager');
     }
 
     /**
@@ -71,6 +68,7 @@ class ExpensesController extends Controller
 
         $exp = new Expenses();
         $exp->create($request->all());
+
         flash()->success(__('Expense has been recorded'));
         return redirect()->back();
     }

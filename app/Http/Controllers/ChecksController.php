@@ -16,10 +16,7 @@ class ChecksController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:create checks', ['only' => ['store']]);
-        $this->middleware('permission:read checks', ['only' => ['index', 'view']]);
-        $this->middleware('permission:update checks', ['only' => ['updateStatus']]);
-        $this->middleware('permission:delete checks', ['only' => ['deleteCheck']]);
+        $this->middleware('role:admin,manager');
     }
 
     /**
