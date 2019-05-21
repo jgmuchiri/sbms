@@ -1,18 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 
 class AdminController extends Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('role:admin,manager');
-    }
 
     /**
      * @return mixed
@@ -31,7 +26,7 @@ class AdminController extends Controller
         $fhandle = fopen($envFile, 'rw');
         $size = filesize($envFile);
         $envContent = '';
-        if($size == 0) {
+        if ($size == 0) {
             flash()->error(__('Your file is empty'));
         } else {
             $envContent = fread($fhandle, $size);
@@ -48,7 +43,7 @@ class AdminController extends Controller
     public function backupEnv(Request $request)
     {
         $envFile = '../.env';
-        return response()->download($envFile, config('app.name').'-ENV-'.date('Y-m-d_H-i').'.txt');
+        return response()->download($envFile, config('app.name') . '-ENV-' . date('Y-m-d_H-i') . '.txt');
     }
 
     /**
@@ -75,26 +70,26 @@ class AdminController extends Controller
     {
         $error = 1;
 
-        if($request->logo !== NULL) {
+        if ($request->logo !== null) {
 
             $file = Input::file('logo');
 
             $extension = $file->getClientOriginalExtension();
 
-            if($extension == 'jpg'
+            if ($extension == 'jpg'
                 || $extension == 'JPG'
                 || $extension == 'png'
                 || $extension == 'PNG') {
 
-                $file->move('img/', 'logo.'.strtolower($extension));
+                $file->move('img/', 'logo.' . strtolower($extension));
 
                 $error = 0;
             }
         }
 
         ($error == 0)
-            ? flash()->success(__('Logo uploaded updated!'))
-            : flash()->error(__('Invalid image!'));
+        ? flash()->success(__('Logo uploaded updated!'))
+        : flash()->error(__('Invalid image!'));
 
         return redirect()->back();
     }
@@ -103,15 +98,15 @@ class AdminController extends Controller
     {
         $dir = '../storage/logs/';
         $logs = [];
-        foreach (glob($dir.'*.*') as $filename) {
+        foreach (glob($dir . '*.*') as $filename) {
             $logs[] = basename($filename, '.log');
         }
 
-        if(isset($_GET['log']) && $_GET['log'] !== '') {
+        if (isset($_GET['log']) && $_GET['log'] !== '') {
 
-            $logFile = '../storage/logs/'.$_GET['log'].'.log';
+            $logFile = '../storage/logs/' . $_GET['log'] . '.log';
 
-            if(!is_file($logFile)) {
+            if (!is_file($logFile)) {
 
                 flash()->error(__('Your log file is empty'));
 
@@ -124,9 +119,11 @@ class AdminController extends Controller
 
             $logContent = '';
 
-            if($size == 0) {
+            if ($size == 0) {
+
                 flash()->error(__('Your log file is empty'));
             } else {
+
                 $logContent = fread($fhandle, $size);
                 fclose($fhandle);
             }
@@ -140,11 +137,13 @@ class AdminController extends Controller
      */
     public function emptyDebugLog(Request $request)
     {
-        if($request->has('log_date')) {
+        if ($request->has('log_date')) {
 
-            $logFile = '../storage/logs/'.$request->log_date.'.log';
+            $logFile = '../storage/logs/' . $request->log_date . '.log';
 
-            if(!is_file($logFile)) flash()->error(__('Your log file is empty'));
+            if (!is_file($logFile)) {
+                flash()->error(__('Your log file is empty'));
+            }
 
             @unlink($logFile);
         }

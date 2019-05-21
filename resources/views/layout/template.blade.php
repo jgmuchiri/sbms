@@ -60,8 +60,7 @@
 		@endif
 
         @if(has_role(['admin']))
-        <li><a href="/debug-log"><span class="fa fa-bug"></span> <span>@lang("Debug log")</span></a></li>
-		<li><a href="/settings"><span class="fa fa-cogs"></span> <span>@lang("Settings")</span></a></li>
+		<li><a href="{{route('settings')}}"><span class="fa fa-cogs"></span> <span>@lang("Settings")</span></a></li>
 		@endif
 
 		<li><a href="/account/profile"><span class="fa fa-user"></span> <span>@lang("Profile")</span></a></li>

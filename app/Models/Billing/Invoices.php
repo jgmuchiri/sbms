@@ -7,12 +7,9 @@ use Dompdf\Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Spatie\Permission\Traits\HasRoles;
 
 class Invoices extends Model
 {
-    use HasRoles;
-
     protected $guard_name = 'web';
 
     //
@@ -162,7 +159,7 @@ class Invoices extends Model
             return 0.00;
         }
         // convert to a float explicitly
-        $value = (float)$value;
+        $value = (float) $value;
         return round($value, 2) * 100;
     }
 
@@ -174,14 +171,14 @@ class Invoices extends Model
     public static function createCustomer($request)
     {
         if (env('APP_ENV') == 'local'):
-            \Stripe\Stripe::setApiKey(config('app.stripe_test_secret')); else:
+            \Stripe\Stripe::setApiKey(config('app.stripe_test_secret'));else:
             \Stripe\Stripe::setApiKey(config('app.stripe_secret'));
         endif;
 
         $customer = \Stripe\Customer::create([
             'email' => $request->email,
             'description' => 'customer for ' . config('app.name'),
-            'source' => $request->stripeToken
+            'source' => $request->stripeToken,
         ]);
 
         //alert admin
@@ -190,7 +187,7 @@ class Invoices extends Model
                 'emails.billing.user-registered-stripe',
                 [
                     'email' => $request->email,
-                    'first_name' => $request->first_name
+                    'first_name' => $request->first_name,
                 ],
                 function ($m) use ($request) {
                     $m->from(config('mail.from.address'), config('mail.from.name'));
@@ -213,7 +210,7 @@ class Invoices extends Model
                 'email' => $data['email'],
                 'first_name' => $data['name'],
                 'amount' => $data['amount'],
-                'desc' => $data['desc']
+                'desc' => $data['desc'],
             ],
             function ($m) use ($data) {
                 $m->from(config('mail.from.address'), config('mail.from.name'));
@@ -287,7 +284,7 @@ class Invoices extends Model
         $interval = $dueDate->diff($today);
         $diff = $interval->format('%R%a');
 
-        if ($due > 0) {//pending
+        if ($due > 0) { //pending
             if ($diff > 1) {
                 $status = 'overdue';
             } else {
@@ -307,7 +304,7 @@ class Invoices extends Model
             ['id' => 'draft', 'name' => 'Draft'],
             ['id' => 'due', 'name' => 'Due'],
             ['id' => 'paid', 'name' => 'Paid'],
-            ['id' => 'overdue', 'name' => 'Overdue']
+            ['id' => 'overdue', 'name' => 'Overdue'],
         ]);
 
         return $collection;

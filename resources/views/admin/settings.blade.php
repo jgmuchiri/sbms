@@ -41,7 +41,7 @@
 						</p>
 					</div>
 					<div class="alert alert-danger">
-						{!! Form::open(['url'=>'settings/backup']) !!}
+						{!! Form::open(['route'=>'backup-env']) !!}
 						<button class="btn btn-warning"><i class="fa fa-database"></i> @lang("Backup First!")</button>
 						{!! Form::close() !!}
 					</div>
@@ -52,7 +52,7 @@
 				</div>
 
 				<div role="tabpanel" class="tab-pane fade" id="logo">
-					{!! Form::open(['url'=>'settings/logo','method'=>'post','files'=>'true']) !!}
+					{!! Form::open(['route'=>'update-logo','method'=>'post','files'=>'true']) !!}
 					<label>@lang("Upload logo")</label>
 
 					<ul>

@@ -20,10 +20,11 @@ Route::group(['middleware' => ['web']], function () {
 
     //guest routes
     Route::post('contact', 'HomeController@sendMessage');
-    Route::get('/','HomeController@index');
+    Route::get('/', 'HomeController@index');
 
-    Route::get('dashboard','Homecontroller@dashboard');
+    Route::get('dashboard', 'Homecontroller@dashboard');
     Route::get('logout', 'Auth\AuthController@getLogout');
+
     Route::get('register/verify/{confirmationCode}', [
         'as' => 'confirmation_path',
         'uses' => 'Auth\AuthController@confirmAccount',
@@ -33,12 +34,21 @@ Route::group(['middleware' => ['web']], function () {
     //    Route::get('register/confirm', 'Auth\AuthController@resendConfirmation');
 
     //settings
-    Route::group(['prefix' => 'settings', 'middleware' => ['role:admin']], function () {
-        Route::get('/', 'AdminController@settings');
-        Route::post('/', 'AdminController@updateEnv');
-        Route::post('backup', 'AdminController@backupEnv');
-        Route::get('/', 'AdminController@settings');
-        Route::post('/logo', 'AdminController@uploadLogo');
+    Route::group([
+        'prefix' => 'admin',
+        'middleware' => ['auth', 'role:admin'],
+        'namespace' => 'Admin',
+    ], function () {
+
+        Route::group(['prefix' => 'settings'], function () {
+            Route::get('/', 'AdminController@settings')->name('view-settings');
+            Route::post('/', 'AdminController@updateEnv')->name('update-env');
+            Route::post('backup', 'AdminController@backupEnv')->name("backup-env");
+        });
+
+        Route::post('/logo', 'AdminController@uploadLogo')->name('update-logo');
+
+        Route::resource('roles', 'RoleController')->except('show');
     });
 
     //users
@@ -51,11 +61,7 @@ Route::group(['middleware' => ['web']], function () {
         Route::post('{id}', 'UserController@updateUser');
 
         Route::post('{id}/update-role', 'UserController@updateUserRole');
-        Route::post('{id}/update-permissions', 'UserController@updatePermissions');
     });
-
-    //Permisions
-    Route::post('revoke-permission', 'UserController@revokePermission');
 
     //routes for all
     Route::group(['prefix' => 'account'], function () {
@@ -123,13 +129,9 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('membership/support/checkout', 'TransactionsController@supportSubscribe');
 
     //contacts
-    Route::group(['prefix' => 'contacts'], function () {
-        Route::get('/', 'ContactsController@index');
-        Route::post('/', 'ContactsController@store');
-        Route::get('/{id}/edit', 'ContactsController@edit');
-        Route::post('/{id}/update', 'ContactsController@update');
-        Route::get('/{id}/delete', 'ContactsController@destroy');
+    Route::resource('contacts', 'ContactsController')->middleware('auth');
 
+    Route::group(['prefix' => 'contacts'], function () {
         Route::get('group/{id}/view', 'ContactsController@viewByGroup');
         Route::post('/groups', 'ContactsController@createGroup');
         Route::get('/groups/{id}/edit', 'ContactsController@editGroup');
